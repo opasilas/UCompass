@@ -1,2 +1,2 @@
-# bookface
-This is the repository for all software activities carried out by bookface group for the BUS course, MSc Computer Science, 2026
+# UCompass
+This is the repository for all software activities carried out by UCompass group for the BUS course, MSc Computer Science, 2026
