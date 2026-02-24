@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Student Dashboard</h2>
+
+<div class="card">
+  <div class="row row-between row-center">
+    <div>
+      <div class="title-row">
+        <strong class="title">{{ student.name }}</strong>
+        <span class="pill">{{ student.email }}</span>
+      </div>
+      {% if student.course %}
+        <div class="small-text">Course: {{ student.course }}</div>
+      {% endif %}
+    </div>
+
+    <div class="stat">
+      <div class="stat-label">Weekly Load</div>
+      <div class="stat-value">{{ "%.1f"|format(week.weekly_load) }}</div>
+      <div class="stat-sub">Threshold: {{ "%.1f"|format(week.threshold) }}</div>
+    </div>
+  </div>
+
+  <div class="small-text top-space">
+    Week: <strong>{{ week.week_start }}</strong> to <strong>{{ week.week_end }}</strong>
+  </div>
+
+  {% if week.exceeded %}
+    <div class="banner banner-warning top-space">
+      <div>
+        <strong>Alert:</strong> You’ve exceeded your weekly effort threshold.
+      </div>
+      <a class="link" href="{{ url_for('dashboard.alert_view', student_id=student.id, week_start=week.week_start) }}">
+        View alert
+      </a>
+    </div>
+  {% endif %}
+</div>
+
+<h3>Tasks (this week)</h3>
+
+{% if tasks %}
+  {% for t in tasks %}
+    <div class="card">
+      <div class="row row-between row-center">
+        <div>
+          <strong class="title">{{ t.title }}</strong>
+          <div class="small-text">
+            {{ t.scheduled_date }} • Est: {{ "%.1f"|format(t.estimated_effort) }}
+          </div>
+        </div>
+
+        <span class="pill pill-strong">{{ t.progress_percent }}%</span>
+      </div>
+
+      {% if t.description %}
+        <p class="paragraph">{{ t.description }}</p>
+      {% endif %}
+
+      <details class="details top-space">
+        <summary>Notes & effort</summary>
+        <div class="top-space-sm">
+          <div class="small-text">
+            <strong>Logged effort:</strong> {{ "%.1f"|format(t.logged_effort) }}
+          </div>
+          <pre class="notes">{{ t.notes }}</pre>
+        </div>
+      </details>
+
+      <form class="form top-space" method="post" action="{{ url_for('tasks.update_task_progress', task_id=t.id) }}">
+        <div class="form-grid">
+          <div class="field field-wide">
+            <label>Note</label>
+            <textarea name="note" rows="2" placeholder="What did you do? Any blockers?"></textarea>
+          </div>
+
+          <div class="field">
+            <label>Effort spent</label>
+            <input name="effort_spent" type="number" step="0.1" min="0" value="0" />
+          </div>
+
+          <div class="field">
+            <label>Progress %</label>
+            <input name="progress_percent" type="number" min="0" max="100" placeholder="(optional)" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit">Update Progress</button>
+        </div>
+      </form>
+    </div>
+  {% endfor %}
+{% else %}
+  <p class="muted">No tasks scheduled for this week.</p>
+{% endif %}
+
+{% endblock %}

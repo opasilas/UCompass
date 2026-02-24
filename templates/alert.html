@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Alert</h2>
+
+<div class="card">
+  <div><strong>{{ student.name }}</strong></div>
+
+  <div class="small-text">
+    Week: <strong>{{ week.week_start }}</strong> to <strong>{{ week.week_end }}</strong>
+  </div>
+
+  <div style="margin-top:8px;">
+    Weekly Load:
+    <strong>{{ "%.1f"|format(week.weekly_load) }}</strong>
+    (Threshold: {{ "%.1f"|format(week.threshold) }})
+  </div>
+
+  {% if week.exceeded %}
+    <div class="warning-box" style="margin-top:12px;">
+      Your estimated workload exceeds the threshold.
+      Consider rescheduling tasks or contacting a Wellbeing Officer.
+    </div>
+  {% else %}
+    <div class="success-box" style="margin-top:12px;">
+      You are within the safe workload range.
+    </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}
