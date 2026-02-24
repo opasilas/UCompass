@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+            margin: 0;
+        }
+        .login-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 320px;
+        }
+        .login-container h2 {
+            text-align: center;
+            color: #333;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #004494;
+        }
+        #errorMessage {
+            color: red;
+            font-size: 14px;
+            text-align: center;
+            display: none; 
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <h2>School Portal</h2>
+        
+        <div id="errorMessage">Invalid email domain.</div>
+
+        <form onsubmit="routeUser(event)">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="name@position.com" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <script>
+        function routeUser(event) {
+            event.preventDefault();
+
+            const userEmail = document.getElementById('email').value.toLowerCase();
+            const errorText = document.getElementById('errorMessage');
+
+            if (userEmail.endsWith('@student.com')) {
+                document.body.innerHTML = `
+                    <div style="text-align: center; margin-top: 20vh;">
+                        <h1 style="color: #0056b3;">👨‍🎓 Student Dashboard</h1>
+                        <p>Welcome back! Here are your grades and upcoming assignments.</p>
+                        <button onclick="location.reload()" style="padding: 10px 20px;">Log Out</button>
+                    </div>
+                `;
+            } 
+            else if (userEmail.endsWith('@teacher.com')) {
+                document.body.innerHTML = `
+                    <div style="text-align: center; margin-top: 20vh;">
+                        <h1 style="color: #28a745;">👩‍🏫 Teacher Dashboard</h1>
+                        <p>Welcome back! Click here to grade papers and manage your classes.</p>
+                        <button onclick="location.reload()" style="padding: 10px 20px;">Log Out</button>
+                    </div>
+                `;
+            } 
+            else {
+                errorText.style.display = 'block'; // Un-hide the error message
+                errorText.innerText = 'Please use a valid @student.com or @teacher.com email.';
+            }
+        }
+    </script>
+
+</body>
+</html>
