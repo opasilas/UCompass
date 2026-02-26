@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "title": "Mindfulness Guide",
+        "category": "Mental Health",
+        "content": "A guide to mindfulness exercises: https://example.com/mindfulness",
+        "created_by": "officer@example.com"
+    },
+    {
+        "id": 2,
+        "title": "Study Skills Handbook",
+        "category": "Academic Support",
+        "content": "Tips for effective studying: https://example.com/study-skills",
+        "created_by": "teacher@example.com"
+    },
+    {
+        "id": 3,
+        "title": "Healthy Recipes for Students",
+        "category": "Physical Wellbeing",
+        "content": "Quick and healthy meal ideas: https://example.com/recipes",
+        "created_by": "officer@example.com"
+    }
+]

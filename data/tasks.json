@@ -1,0 +1,47 @@
+[
+    {
+        "id": 101,
+        "title": "Complete Flask Project",
+        "description": "Build out Flask application with new features.",
+        "student_email": "student@example.com",
+        "deadline": "2026-03-10",
+        "logged_effort": 5.0,
+        "notes": "Started on feature one.\\n[2026-02-28 10:30] Researching flat file storage."
+    },
+    {
+        "id": 102,
+        "title": "Math Assignment 1",
+        "description": "Solve problems 1-5 from Chapter 3.",
+        "student_email": "student@example.com",
+        "deadline": "2026-03-05",
+        "logged_effort": 2.0,
+        "notes": "Completed problem 1."
+    },
+    {
+        "id": 103,
+        "title": "History Essay Outline",
+        "description": "Outline for the Renaissance essay.",
+        "student_email": "student@example.com",
+        "deadline": "2026-03-07",
+        "logged_effort": 3.0,
+        "notes": "Chose topic."
+    },
+    {
+        "id": 104,
+        "title": "Science Lab Report",
+        "description": "Write up experiment results.",
+        "student_email": "student@example.com",
+        "deadline": "2026-03-12",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 105,
+        "title": "Study for Midterm",
+        "description": "Review chapters 1-4.",
+        "student_email": "student@example.com",
+        "deadline": "2026-03-08",
+        "logged_effort": 1.0,
+        "notes": "Reviewed Chapter 1."
+    }
+]
