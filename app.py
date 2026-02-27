@@ -112,7 +112,7 @@ def create_app():
                     weekly_deadlines[week_start_str] = weekly_deadlines.get(week_start_str, 0) + 1
             
             for week_start_str, count in weekly_deadlines.items():
-                if count > 5: # Example threshold for red alert (was 2)
+                if count >= 5: # Example threshold for red alert (was 2)
                     busiest_week_alert = True
                     break
 
