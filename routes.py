@@ -126,3 +126,7 @@ def register_blueprints(app):
     app.register_blueprint(resources_bp)
     app.register_blueprint(tasks_bp)
     app.register_blueprint(admin_bp)
+
+
+    # this is a test change
+    # this is change to test branching
