@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Welcome, Student!</h1>
+    <h2>Your Deadlines and Tasks</h2>
+    <form action="{{ url_for('student_dashboard') }}" method="get">
+        <label for="busiest_week_toggle">Show Busiest Week Alert:</label>
+        <input type="checkbox" id="busiest_week_toggle" name="show_busiest_week_alert" value="true" onchange="this.form.submit()" {% if show_busiest_week_alert_toggle == 'true' %}checked{% endif %}>
+    </form>
+
+    {% if busiest_week_alert %}
+        <div class="flash-message flash-danger">
+            <strong>RED ALERT!</strong> You have more than 5 deadlines in a single week. Consider reducing workload!
+        </div>
+    {% endif %}
+
+    {% if student_tasks %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Deadline</th>
+                    <th>Logged Effort</th>
+                    <th>Notes</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in student_tasks %}
+                <tr>
+                    <td>{{ task.title }}</td>
+                    <td>{{ task.deadline if task.deadline else 'N/A' }}</td>
+                    <td>{{ task.logged_effort }} hours</td>
+                    <td>{{ task.notes.split('\n')|first if task.notes else 'No notes' }}...</td>
+                    <td><a href="{{ url_for('update_task', task_id=task.id) }}">Update</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No tasks assigned yet.</p>
+    {% endif %}
+
+    <h2>Calendar View</h2>
+    <div class="calendar-container">
+        {% if calendar_weeks %}
+            <div class="calendar-grid">
+                {% for week in calendar_weeks %}
+                    <div class="week-card {% if show_calendar_busy_highlight and week.is_busy %}busy-week{% endif %}">
+                        <h3>Week of {{ week.start_date }}</h3>
+                        <p>to {{ week.end_date }}</p>
+                        <p>Deadlines: {{ week.deadlines_count }}</p>
+                        {% if week.is_busy %}
+                            <p class="busy-text">Busy Week!</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No calendar data available.</p>
+        {% endif %}
+    </div>
+
+    <h2>Key Support Information</h2>
+    <p>Need help? Contact your academic advisor or wellbeing officer.</p>
+    <!-- More support info here -->
+</div>
+{% endblock %}
