@@ -1,7 +1,6 @@
 from __future__ import annotations
 from datetime import timedelta, datetime
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
-from models import db, Task, Student
 from app import save_data, load_data
 
 main_bp = Blueprint('main', __name__)
