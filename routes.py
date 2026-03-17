@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from __future__ import annotations
 from datetime import timedelta, datetime
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
@@ -132,12 +131,6 @@ def teacher_dashboard():
                             user_role=session['user_role'],
                             all_resources=current_app.resources_data, # For Feature Two
                             all_tasks=current_app.tasks_data) # For Feature Two (adding deadlines)
-=======
-from flask import Blueprint, render_template
-
-
-main_bp = Blueprint("main", __name__, template_folder="templates")
->>>>>>> 7f81ad130f20b3f37cddbf32c9b3c5c69ba50148
 
 @main_bp.route('/wellbeing_dashboard')
 def wellbeing_dashboard():
@@ -150,7 +143,6 @@ def wellbeing_dashboard():
                             all_resources=current_app.resources_data,
                             all_tasks=current_app.tasks_data) # For Feature Two (adding deadlines)
 
-<<<<<<< HEAD
 # Placeholder for Feature Two: Add/Edit Resources
 @main_bp.route('/manage_resources', methods=['GET', 'POST'])
 def manage_resources():
@@ -254,10 +246,3 @@ def delete_resource(resource_id):
         flash('Resource not found.', 'danger')
     
     return redirect(url_for('main.manage_resources'))
-=======
-@main_bp.route("/")
-def index():
-    """Base index route."""
-
-    return render_template("index.html")
->>>>>>> 7f81ad130f20b3f37cddbf32c9b3c5c69ba50148
