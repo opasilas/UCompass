@@ -2,6 +2,8 @@ from flask import Flask
 import os
 import json
 from datetime import datetime, timedelta
+from routes import register_blueprints
+
 
 
 def load_data(filename):
