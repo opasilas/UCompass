@@ -11,7 +11,7 @@
     <p>Current Notes:</p>
     <pre>{{ task.notes if task.notes else 'No notes yet.' }}</pre>
 
-    <form action="{{ url_for('update_task', task_id=task.id) }}" method="post">
+    <form action="{{ url_for('main.update_task', task_id=task.id) }}" method="post">
         <h2>Log Effort</h2>
         <div class="form-group">
             <label for="effort_logged">Hours to Add:</label>
@@ -25,6 +25,6 @@
         </div>
         <button type="submit">Update Task</button>
     </form>
-    <p><a href="{{ url_for('student_dashboard') }}">Back to Dashboard</a></p>
+    <p><a href="{{ url_for('main.student_dashboard') }}">Back to Dashboard</a></p>
 </div>
 {% endblock %}

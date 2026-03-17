@@ -6,7 +6,7 @@
 <div class="container">
     <h1>Welcome, Student!</h1>
     <h2>Your Deadlines and Tasks</h2>
-    <form action="{{ url_for('student_dashboard') }}" method="get">
+    <form action="{{ url_for('main.student_dashboard') }}" method="get">
         <label for="busiest_week_toggle">Show Busiest Week Alert:</label>
         <input type="checkbox" id="busiest_week_toggle" name="show_busiest_week_alert" value="true" onchange="this.form.submit()" {% if show_busiest_week_alert_toggle == 'true' %}checked{% endif %}>
     </form>
@@ -35,7 +35,7 @@
                     <td>{{ task.deadline if task.deadline else 'N/A' }}</td>
                     <td>{{ task.logged_effort }} hours</td>
                     <td>{{ task.notes.split('\n')|first if task.notes else 'No notes' }}...</td>
-                    <td><a href="{{ url_for('update_task', task_id=task.id) }}">Update</a></td>
+                    <td><a href="{{ url_for('main.update_task', task_id=task.id) }}">Update</a></td>
                 </tr>
                 {% endfor %}
             </tbody>

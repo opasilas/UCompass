@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container">
     <h1>Login to UCompass</h1>
-    <form action="{{ url_for('login') }}" method="post">
+    <form action="{{ url_for('main.login') }}" method="post">
         <div class="form-group">
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" value="{{ email if email else '' }}" required>

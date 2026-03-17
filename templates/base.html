@@ -21,11 +21,11 @@
 <body>
     <header>
         <nav>
-            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('main.index') }}">Home</a>
             {% if 'user_email' in session %}
-                <a href="{{ url_for('logout') }}">Logout ({{ session['user_email'] }})</a>
+                <a href="{{ url_for('main.logout') }}">Logout ({{ session['user_email'] }})</a>
             {% else %}
-                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('main.login') }}">Login</a>
             {% endif %}
         </nav>
     </header>
