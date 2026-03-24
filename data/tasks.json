@@ -32,8 +32,8 @@
         "description": "Write up experiment results.",
         "student_email": "student@example.com",
         "deadline": "2026-03-12",
-        "logged_effort": 0.0,
-        "notes": ""
+        "logged_effort": 3.2,
+        "notes": "\n[2026-03-22 18:20] defies\n[2026-03-22 18:21] hi this is a test"
     },
     {
         "id": 105,
@@ -43,5 +43,59 @@
         "deadline": "2026-03-08",
         "logged_effort": 1.0,
         "notes": "Reviewed Chapter 1."
+    },
+    {
+        "id": 106,
+        "title": "test task",
+        "description": "hi, test",
+        "deadline": "2026-03-27",
+        "student_email": "student@example.com",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 107,
+        "title": "another test",
+        "description": "hello",
+        "deadline": "2026-03-12",
+        "student_email": "student@example.com",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 108,
+        "title": "test 3",
+        "description": "",
+        "deadline": "2026-03-12",
+        "student_email": "student@example.com",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 109,
+        "title": "test 4",
+        "description": "",
+        "deadline": null,
+        "student_email": "student@example.com",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 110,
+        "title": "test 4",
+        "description": "",
+        "deadline": null,
+        "student_email": "student@example.com",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 111,
+        "title": "tes4",
+        "description": "",
+        "deadline": "2026-03-12",
+        "student_email": "student@example.com",
+        "logged_effort": 0.0,
+        "notes": ""
     }
 ]

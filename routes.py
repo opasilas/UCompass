@@ -5,6 +5,42 @@ from app import save_data, load_data
 
 main_bp = Blueprint('main', __name__)
 
+class DashboardController:
+    """Implements the logic defined in the DashboardController class diagram."""
+    
+    def __init__(self, tasks, resources):
+        self.tasks = tasks
+        self.resources = resources
+        self.threshold = 5
+
+    def calculate_weekly_load(self, student_email: str) -> dict:
+        """Sequence Diagram S7: logic for determining busy weeks."""
+        weekly_counts = {}
+        student_tasks = [t for t in self.tasks if t.get('student_email') == student_email]
+        
+        for task in student_tasks:
+            # Skip tasks without a valid deadline string
+            deadline_val = task.get('deadline')
+            if not deadline_val or not isinstance(deadline_val, str):
+                continue
+            try:
+                date_obj = datetime.strptime(deadline_val, '%Y-%m-%d')
+            except (ValueError, TypeError):
+                # ignore malformed or non-string deadline values
+                continue
+            # Use (year, week) tuple as key to avoid collisions across years
+            iso = date_obj.isocalendar()
+            key = (iso[0], iso[1])
+            weekly_counts[key] = weekly_counts.get(key, 0) + 1
+        return weekly_counts
+
+    def get_priority_resources(self, is_busy_week: bool):
+        """Sequence Diagram S8: Fetches 'EC' support if busy, or generic if not."""
+        if is_busy_week:
+            # Filter for Wellbeing/Emergency categories
+            return [r for r in self.resources if r.get('category') == 'Wellbeing']
+        return self.resources
+
 @main_bp.route('/')
 def index():
     if 'user_email' in session:
@@ -52,72 +88,142 @@ def logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('main.index'))
 
+
 @main_bp.route('/student_dashboard')
 def student_dashboard():
     if 'user_role' not in session or session['user_role'] != 'student':
         flash('Unauthorized access.', 'danger')
         return redirect(url_for('main.login'))
-    
-    # Placeholder for student-specific tasks and data
-    student_tasks = [t for t in current_app.tasks_data if t['student_email'] == session['user_email']]
-    
-    # For Feature One (Busiest Week Toggle)
-    # Assuming tasks have a 'deadline' field in YYYY-MM-DD format
+
+    controller = DashboardController(current_app.tasks_data, current_app.resources_data)
+    email = session['user_email']
+
+    # Weekly load using controller (keys from controller may be week identifiers)
+    weekly_load = controller.calculate_weekly_load(email)
+
+    # Use controller.threshold and >= as requested
+    is_busy_week = any(count >= controller.threshold for count in weekly_load.values())
+
+    # Toggle for fetching priority resources
+    toggle_on = request.args.get('busy_toggle') == 'on'
+    display_resources = controller.get_priority_resources(is_busy_week and toggle_on)
+
+    # Student tasks for calendar and lists
+    student_tasks = [t for t in current_app.tasks_data if t.get('student_email') == email]
+
+    # Busiest-week alert (use >= controller.threshold)
     busiest_week_alert = False
     if request.args.get('show_busiest_week_alert') == 'true':
-        # This is a very simplistic implementation, needs to be more robust
-        # to handle different week starts and edge cases
-        weekly_deadlines = {}
-        for task in student_tasks:
-            if 'deadline' in task:
-                deadline_date = datetime.strptime(task['deadline'], '%Y-%m-%d').date()
-                # Determine the start of the week for this deadline
-                # Assuming week starts on Monday
-                week_start = deadline_date - timedelta(days=deadline_date.weekday())
-                week_start_str = week_start.isoformat()
-                weekly_deadlines[week_start_str] = weekly_deadlines.get(week_start_str, 0) + 1
-        
-        for week_start_str, count in weekly_deadlines.items():
-            if count > 5: # Example threshold for red alert (was 2)
-                busiest_week_alert = True
-                break
+        busiest_week_alert = any(count >= controller.threshold for count in weekly_load.values())
 
-    
     # Calendar View Data Generation
     today = datetime.now().date()
-    # Find the Monday of the current week
     current_week_start = today - timedelta(days=today.weekday())
-    
-    # Define the range for the calendar (e.g., 2 weeks before, current week, 2 weeks after)
     calendar_weeks = []
-    for i in range(-2, 3): # -2, -1, 0, 1, 2 for 5 weeks total
+    for i in range(-2, 3):
         week_start = current_week_start + timedelta(weeks=i)
         week_end = week_start + timedelta(days=6)
-        
-        deadlines_in_week = [
-            task for task in student_tasks 
-            if task.get('deadline') and 
-                week_start <= datetime.strptime(task['deadline'], '%Y-%m-%d').date() <= week_end
-        ]
-        
-        is_busy_week = len(deadlines_in_week) > 5
+
+        # Determine week identifier and use controller's weekly load (preserve existing logic)
+        iso = week_start.isocalendar()
+        week_key = (iso[0], iso[1])
+        week_count = weekly_load.get(week_key, 0)
+
+        # Build per-day data for display only (days show tasks but busy state stays at week level)
+        days = []
+        for d in range(7):
+            day_date = week_start + timedelta(days=d)
+            tasks_on_day = [
+                task for task in student_tasks
+                if task.get('deadline') and datetime.strptime(task['deadline'], '%Y-%m-%d').date() == day_date
+            ]
+            days.append({
+                'date': day_date.isoformat(),
+                'has_tasks': len(tasks_on_day) > 0,
+                'tasks': tasks_on_day,
+                'deadlines_count': len(tasks_on_day)
+            })
+
+        # Keep busy logic at week level using controller.threshold
+        is_week_busy = week_count >= controller.threshold
 
         week_info = {
             'start_date': week_start.isoformat(),
             'end_date': week_end.isoformat(),
-            'is_busy': is_busy_week,
-            'deadlines_count': len(deadlines_in_week) # For debugging/display
+            'is_busy': is_week_busy,
+            'deadlines_count': sum(day['deadlines_count'] for day in days),
+            'days': days
         }
         calendar_weeks.append(week_info)
+        
+    # Build a month-style calendar (Sunday-first) for the current month
+    first_of_month = today.replace(day=1)
+    # Find the first Sunday on or before the first of month
+    start_offset = (first_of_month.weekday() + 1) % 7  # weekday(): Mon=0..Sun=6 -> convert to Sun=0..Sat=6
+    grid_start = first_of_month - timedelta(days=start_offset)
 
+    # Last day of month
+    if first_of_month.month == 12:
+        next_month_first = first_of_month.replace(year=first_of_month.year + 1, month=1, day=1)
+    else:
+        next_month_first = first_of_month.replace(month=first_of_month.month + 1, day=1)
+    last_of_month = next_month_first - timedelta(days=1)
 
-    return render_template('student_dashboard.html', 
-                            student_email=session['user_email'], 
-                            student_tasks=student_tasks,
-                            busiest_week_alert=busiest_week_alert,
-                            show_busiest_week_alert_toggle=request.args.get('show_busiest_week_alert'),
-                            calendar_weeks=calendar_weeks,
-                            show_calendar_busy_highlight=request.args.get('show_busiest_week_alert') == 'true')
+    # Build weeks until we've covered the month
+    calendar_month = {
+        'month': first_of_month.strftime('%B'),
+        'year': first_of_month.year,
+        'weeks': []
+    }
+
+    cursor = grid_start
+    while cursor <= last_of_month or len(calendar_month['weeks']) < 6:
+        week_days = []
+        for d in range(7):
+            day_date = cursor + timedelta(days=d)
+            tasks_on_day = [
+                task for task in student_tasks
+                if task.get('deadline') and datetime.strptime(task['deadline'], '%Y-%m-%d').date() == day_date
+            ]
+            # ISO week tuple for week-level busy check
+            iso = day_date.isocalendar()
+            iso_week_key = (iso[0], iso[1])
+            week_days.append({
+                'date': day_date,
+                'in_month': day_date.month == first_of_month.month,
+                'tasks': tasks_on_day,
+                'deadlines_count': len(tasks_on_day),
+                'iso_week_key': iso_week_key
+            })
+
+        # Determine canonical ISO week for this row (use the middle day) so the row maps
+        # to a single ISO week and doesn't inherit the same ISO-week from adjacent rows.
+        mid_day = cursor + timedelta(days=3)
+        mid_iso = mid_day.isocalendar()
+        mid_week_key = (mid_iso[0], mid_iso[1])
+        week_busy = weekly_load.get(mid_week_key, 0) >= controller.threshold
+
+        calendar_month['weeks'].append({
+            'days': week_days,
+            'is_busy': week_busy
+        })
+
+        cursor = cursor + timedelta(days=7)
+        # Stop if we've added enough rows and the last row is completely after the month
+        if cursor > last_of_month and len(calendar_month['weeks']) >= 4:
+            break
+
+    return render_template('student_dashboard.html',
+                           student_email=session['user_email'],
+                           student_tasks=student_tasks,
+                           resources=display_resources,
+                           is_busy=is_busy_week,
+                           toggle_on=toggle_on,
+                           busiest_week_alert=busiest_week_alert,
+                           show_busiest_week_alert_toggle=request.args.get('show_busiest_week_alert'),
+                           calendar_weeks=calendar_weeks,
+                           calendar_month=calendar_month,
+                           show_calendar_busy_highlight=request.args.get('show_busiest_week_alert') == 'true')
 
 @main_bp.route('/teacher_dashboard')
 def teacher_dashboard():
@@ -199,6 +305,41 @@ def add_deadline(task_id):
         return redirect(url_for('main.teacher_dashboard'))
     
     return render_template('add_deadline.html', task=task)
+
+
+# Student: create a new task (can be pre-filled with ?deadline=YYYY-MM-DD)
+@main_bp.route('/create_task', methods=['GET', 'POST'])
+def create_task():
+    if 'user_role' not in session or session['user_role'] != 'student':
+        flash('Unauthorized access.', 'danger')
+        return redirect(url_for('main.login'))
+
+    prefill_deadline = request.args.get('deadline')
+    if request.method == 'POST':
+        title = request.form.get('title', '').strip()
+        description = request.form.get('description', '').strip()
+        deadline_str = request.form.get('deadline') or None
+
+        if not title:
+            flash('Title is required.', 'danger')
+            return render_template('create_task.html', deadline=deadline_str, title=title, description=description)
+
+        new_id = max([t['id'] for t in current_app.tasks_data]) + 1 if current_app.tasks_data else 1
+        new_task = {
+            'id': new_id,
+            'title': title,
+            'description': description,
+            'deadline': deadline_str,
+            'student_email': session['user_email'],
+            'logged_effort': 0.0,
+            'notes': ''
+        }
+        current_app.tasks_data.append(new_task)
+        save_data('tasks.json', current_app.tasks_data)
+        flash('Task created successfully!', 'success')
+        return redirect(url_for('main.student_dashboard'))
+
+    return render_template('create_task.html', deadline=prefill_deadline)
 
 # Placeholder for Feature Three: Student Log Effort/Notes
 @main_bp.route('/update_task/<int:task_id>', methods=['GET', 'POST'])
