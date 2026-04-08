@@ -97,5 +97,14 @@
         "student_email": "student@example.com",
         "logged_effort": 0.0,
         "notes": ""
+    },
+    {
+        "id": 112,
+        "title": "compete online quiz",
+        "description": "",
+        "deadline": "2026-04-08",
+        "student_email": "student@example.com",
+        "logged_effort": 0.0,
+        "notes": ""
     }
 ]

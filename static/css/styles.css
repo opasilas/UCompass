@@ -556,7 +556,27 @@ table tbody tr:hover {
     background: linear-gradient(180deg, rgba(255,230,230,0.6), rgba(255,245,245,0.6));
     border-color: #ffb3b3;
 }
+.calendar-header {
+    display: grid;
+    grid-template-columns: 60px 1fr 60px;
+    align-items: center;
+    margin-bottom: 12px;
+}
 
+.nav-btn {
+    text-decoration: none;
+    font-size: 28px;
+    font-weight: 700;
+    color: #5b117a;
+    justify-self: center;
+}
+
+.month-title {
+    text-align: center;
+    color: #ff9800;
+    font-weight: 800;
+    margin: 0;
+}
 /* Links for day cells */
 .day-link { display: block; color: inherit; text-decoration: none; }
 .day-link:hover { text-decoration: none; transform: translateY(-2px); }

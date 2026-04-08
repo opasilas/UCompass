@@ -1,5 +1,5 @@
 from __future__ import annotations
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime,date
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
 from app import save_data, load_data
 
@@ -155,9 +155,16 @@ def student_dashboard():
             'days': days
         }
         calendar_weeks.append(week_info)
-        
-    # Build a month-style calendar (Sunday-first) for the current month
-    first_of_month = today.replace(day=1)
+
+    # Accept optional month/year query parameters for navigation
+    month = request.args.get('month', type=int)
+    year = request.args.get('year', type=int)
+    today = datetime.now().date()
+    if not month or not year:
+        month = today.month
+        year = today.year
+    first_of_month = date(year, month, 1)
+
     # Find the first Sunday on or before the first of month
     start_offset = (first_of_month.weekday() + 1) % 7  # weekday(): Mon=0..Sun=6 -> convert to Sun=0..Sat=6
     grid_start = first_of_month - timedelta(days=start_offset)
@@ -213,6 +220,16 @@ def student_dashboard():
         if cursor > last_of_month and len(calendar_month['weeks']) >= 4:
             break
 
+    # Compute previous and next months for navigation
+    if month == 1:
+        prev_month, prev_year = 12, year - 1
+    else:
+        prev_month, prev_year = month - 1, year
+    if month == 12:
+        next_month, next_year = 1, year + 1
+    else:
+        next_month, next_year = month + 1, year
+
     return render_template('student_dashboard.html',
                            student_email=session['user_email'],
                            student_tasks=student_tasks,
@@ -223,7 +240,14 @@ def student_dashboard():
                            show_busiest_week_alert_toggle=request.args.get('show_busiest_week_alert'),
                            calendar_weeks=calendar_weeks,
                            calendar_month=calendar_month,
-                           show_calendar_busy_highlight=request.args.get('show_busiest_week_alert') == 'true')
+                           show_calendar_busy_highlight=request.args.get('show_busiest_week_alert') == 'true',
+                           current_month=month,
+                           current_year=year,
+                           prev_month=prev_month,
+                           prev_year=prev_year,
+                           next_month=next_month,
+                           next_year=next_year
+                           )
 
 @main_bp.route('/teacher_dashboard')
 def teacher_dashboard():

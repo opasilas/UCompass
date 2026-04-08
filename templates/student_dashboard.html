@@ -50,36 +50,41 @@
     {% endif %}
 
     <h2>Calendar View</h2>
-    <div class="calendar-container">
-        {% if calendar_month %}
-            <div class="month-calendar">
-                <h2 class="month-title">{{ calendar_month.month }} {{ calendar_month.year }}</h2>
-                <div class="weekday-row">
-                    <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
-                </div>
-                <div class="month-grid">
-                    {% for week in calendar_month.weeks %}
-                        {% for day in week.days %}
-                                <a class="day-link" href="{{ url_for('main.create_task') }}?deadline={{ day.date.isoformat() }}">
-                                    <div class="month-day {% if not day.in_month %}other-month{% endif %} {% if show_calendar_busy_highlight and week.is_busy %}busy-week-day{% endif %}">
-                                        <div class="day-number">{{ day.date.day }}</div>
-                                        <div class="day-content">
-                                            {% for t in day.tasks %}
-                                                <div class="task-item">{{ t.title }}</div>
-                                            {% else %}
-                                                <div class="no-tasks">&mdash;</div>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                </a>
-                        {% endfor %}
-                    {% endfor %}
-                </div>
+<div class="calendar-container">
+    {% if calendar_month %}
+        <div class="month-calendar">
+            <div class="calendar-header">
+    <a href="{{ url_for('main.student_dashboard', month=prev_month, year=prev_year) }}" class="nav-btn">←</a>
+
+    <h2 class="month-title">{{ calendar_month.month }} {{ calendar_month.year }}</h2>
+
+    <a href="{{ url_for('main.student_dashboard', month=next_month, year=next_year) }}" class="nav-btn">→</a>
+</div>
+
+            <div class="weekday-row">
+                <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
             </div>
-        {% else %}
-            <p>No calendar data available.</p>
-        {% endif %}
-    </div>
+            <div class="month-grid">
+                {% for week in calendar_month.weeks %}
+                    {% for day in week.days %}
+                        <a class="day-link" href="{{ url_for('main.create_task') }}?deadline={{ day.date.isoformat() }}">
+                            <div class="month-day {% if not day.in_month %}other-month{% endif %} {% if show_calendar_busy_highlight and week.is_busy %}busy-week-day{% endif %}">
+                                <div class="day-number">{{ day.date.day }}</div>
+                                <div class="day-content">
+                                    {% for t in day.tasks %}
+                                        <div class="task-item">{{ t.title }}</div>
+                                    {% else %}
+                                        <div class="no-tasks">&mdash;</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </a>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>
 
     <h2>Key Support Information</h2>
     <p>Need help? Contact your academic advisor or wellbeing officer.</p>
