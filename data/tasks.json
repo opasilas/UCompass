@@ -5,7 +5,7 @@
         "description": "Build out Flask application with new features.",
         "student_email": "student@example.com",
         "deadline": "2026-03-10",
-        "logged_effort": 5.0,
+        "logged_effort": 7.0,
         "notes": "Started on feature one.\\n[2026-02-28 10:30] Researching flat file storage."
     },
     {

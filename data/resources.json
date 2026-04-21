@@ -19,5 +19,12 @@
         "category": "Physical Wellbeing",
         "content": "Quick and healthy meal ideas: https://example.com/recipes",
         "created_by": "officer@example.com"
+    },
+    {
+        "id": 4,
+        "title": "Algorithms cheat sheet",
+        "category": "Academic",
+        "content": "https://example.com/matj",
+        "created_by": "teacher@example.com"
     }
 ]
