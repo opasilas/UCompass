@@ -4,21 +4,33 @@
 
 {% block content %}
 <div class="container">
+
     <h1>Welcome, Student!</h1>
+
     <h2>Your Deadlines and Tasks</h2>
-        <div class="row-between top-space">
-            <form action="{{ url_for('main.create_task') }}" method="get">
-                <button class="add-task-btn">Add New Task</button>
-            </form>
-        </div>
-    <form action="{{ url_for('main.student_dashboard') }}" method="get">
-        <label for="busiest_week_toggle">Show Busiest Week Alert:</label>
-        <input type="checkbox" id="busiest_week_toggle" name="show_busiest_week_alert" value="true" onchange="this.form.submit()" {% if show_busiest_week_alert_toggle == 'true' %}checked{% endif %}>
-    </form>
+
+    <div class="row-between top-space" style="gap: 1.5rem;">
+        <a href="{{ url_for('main.create_task') }}">
+            <button class="add-task-btn">Add New Task</button>
+        </a>
+
+        <form action="{{ url_for('main.student_dashboard') }}" method="get">
+            <label for="busiest_week_toggle">Show Busiest Week Alert:</label>
+            <input
+                type="checkbox"
+                id="busiest_week_toggle"
+                name="show_busiest_week_alert"
+                value="true"
+                onchange="this.form.submit()"
+                {% if show_busiest_week_alert_toggle == 'true' %}checked{% endif %}
+            >
+        </form>
+    </div>
 
     {% if busiest_week_alert %}
         <div class="flash-message flash-danger">
-            <strong>RED ALERT!</strong> You have more than 5 deadlines in a single week. Consider reducing workload!
+            <strong>RED ALERT!</strong>
+            You have more than 5 deadlines in a single week. Consider reducing your workload!
         </div>
     {% endif %}
 
@@ -35,13 +47,15 @@
             </thead>
             <tbody>
                 {% for task in student_tasks %}
-                <tr>
-                    <td>{{ task.title }}</td>
-                    <td>{{ task.deadline if task.deadline else 'N/A' }}</td>
-                    <td>{{ task.logged_effort }} hours</td>
-                    <td>{{ task.notes.split('\n')|first if task.notes else 'No notes' }}...</td>
-                    <td><a href="{{ url_for('main.update_task', task_id=task.id) }}">Update</a></td>
-                </tr>
+                    <tr>
+                        <td>{{ task.title }}</td>
+                        <td>{{ task.deadline or 'N/A' }}</td>
+                        <td>{{ task.logged_effort }} hours</td>
+                        <td>{{ task.notes.split('\n') | first if task.notes else 'No notes' }}...</td>
+                        <td>
+                            <a href="{{ url_for('main.update_task', task_id=task.id) }}">Update</a>
+                        </td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>
@@ -50,28 +64,39 @@
     {% endif %}
 
     <h2>Calendar View</h2>
+
     <div class="calendar-container">
         {% if calendar_month %}
             <div class="month-calendar">
                 <h2 class="month-title">{{ calendar_month.month }} {{ calendar_month.year }}</h2>
+
                 <div class="weekday-row">
-                    <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                    {% for day_name in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] %}
+                        <div>{{ day_name }}</div>
+                    {% endfor %}
                 </div>
+
                 <div class="month-grid">
                     {% for week in calendar_month.weeks %}
                         {% for day in week.days %}
-                                <a class="day-link" href="{{ url_for('main.create_task') }}?deadline={{ day.date.isoformat() }}">
-                                    <div class="month-day {% if not day.in_month %}other-month{% endif %} {% if show_calendar_busy_highlight and week.is_busy %}busy-week-day{% endif %}">
-                                        <div class="day-number">{{ day.date.day }}</div>
-                                        <div class="day-content">
-                                            {% for t in day.tasks %}
-                                                <div class="task-item">{{ t.title }}</div>
-                                            {% else %}
-                                                <div class="no-tasks">&mdash;</div>
-                                            {% endfor %}
-                                        </div>
+                            {% set day_classes = [
+                                'month-day',
+                                ('other-month' if not day.in_month else ''),
+                                ('busy-week-day' if show_calendar_busy_highlight and week.is_busy else '')
+                            ] | join(' ') | trim %}
+
+                            <a class="day-link" href="{{ url_for('main.create_task') }}?deadline={{ day.date.isoformat() }}">
+                                <div class="{{ day_classes }}">
+                                    <div class="day-number">{{ day.date.day }}</div>
+                                    <div class="day-content">
+                                        {% for t in day.tasks %}
+                                            <div class="task-item">{{ t.title }}</div>
+                                        {% else %}
+                                            <div class="no-tasks">&mdash;</div>
+                                        {% endfor %}
                                     </div>
-                                </a>
+                                </div>
+                            </a>
                         {% endfor %}
                     {% endfor %}
                 </div>
@@ -83,6 +108,18 @@
 
     <h2>Key Support Information</h2>
     <p>Need help? Contact your academic advisor or wellbeing officer.</p>
-    <!-- More support info here -->
+
+    <div class="resource-list">
+        {% for resource in resources %}
+            <div class="resource-item">
+                <h3>{{ resource.title }}</h3>
+                <p><strong>Category:</strong> {{ resource.category }}</p>
+                <p>{{ resource.content }}</p>
+            </div>
+        {% else %}
+            <p>No resources available.</p>
+        {% endfor %}
+    </div>
+
 </div>
 {% endblock %}

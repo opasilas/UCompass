@@ -1,23 +1,37 @@
 [
     {
         "id": 1,
-        "name": "Alice Student",
-        "email": "student@example.com",
-        "password": "password",
+        "name": "Alex Student",
+        "email": "alex@student.com",
+        "password": "alex",
         "role": "student"
     },
     {
         "id": 2,
         "name": "Bob Teacher",
-        "email": "teacher@example.com",
+        "email": "teacher@teacher.com",
         "password": "password",
         "role": "teacher"
     },
     {
         "id": 3,
         "name": "Charlie Officer",
-        "email": "officer@example.com",
+        "email": "officer@welfare.com",
         "password": "password",
         "role": "wellbeing_officer"
+    },
+    {
+        "id": 4,
+        "name": "Lucy Student",
+        "email": "lucy@student.com",
+        "password": "lucy",
+        "role": "student"
+    },
+    {
+        "id": 5,
+        "name": "George Student",
+        "email": "george@student.com",
+        "password": "george",
+        "role": "student"
     }
 ]

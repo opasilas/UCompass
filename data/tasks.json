@@ -3,8 +3,8 @@
         "id": 101,
         "title": "Complete Flask Project",
         "description": "Build out Flask application with new features.",
-        "student_email": "student@example.com",
-        "deadline": "2026-03-10",
+        "student_email": "alex@student.com",
+        "deadline": "2026-03-16",
         "logged_effort": 5.0,
         "notes": "Started on feature one.\\n[2026-02-28 10:30] Researching flat file storage."
     },
@@ -12,7 +12,7 @@
         "id": 102,
         "title": "Math Assignment 1",
         "description": "Solve problems 1-5 from Chapter 3.",
-        "student_email": "student@example.com",
+        "student_email": "lucy@student.com",
         "deadline": "2026-03-05",
         "logged_effort": 2.0,
         "notes": "Completed problem 1."
@@ -21,7 +21,7 @@
         "id": 103,
         "title": "History Essay Outline",
         "description": "Outline for the Renaissance essay.",
-        "student_email": "student@example.com",
+        "student_email": "lucy@student.com",
         "deadline": "2026-03-07",
         "logged_effort": 5.0,
         "notes": "Chose topic."
@@ -30,71 +30,143 @@
         "id": 104,
         "title": "Science Lab Report",
         "description": "Write up experiment results.",
-        "student_email": "student@example.com",
-        "deadline": "2026-03-12",
+        "student_email": "george@student.com",
+        "deadline": "2026-03-16",
         "logged_effort": 3.2,
-        "notes": "\n[2026-03-22 18:20] defies\n[2026-03-22 18:21] hi this is a test"
+        "notes": ""
     },
     {
         "id": 105,
         "title": "Study for Midterm",
         "description": "Review chapters 1-4.",
-        "student_email": "student@example.com",
-        "deadline": "2026-03-08",
+        "student_email": "george@student.com",
+        "deadline": "2026-03-17",
         "logged_effort": 1.0,
         "notes": "Reviewed Chapter 1."
     },
     {
         "id": 106,
-        "title": "test task",
-        "description": "hi, test",
-        "deadline": "2026-03-27",
-        "student_email": "student@example.com",
-        "logged_effort": 0.0,
+        "title": "Prepare for presentation",
+        "description": "Prepare slides for next week's presentation.",
+        "deadline": "2026-03-17",
+        "student_email": "alex@student.com",
+        "logged_effort": 2.5,
         "notes": ""
     },
     {
         "id": 107,
-        "title": "another test",
-        "description": "hello",
-        "deadline": "2026-03-12",
-        "student_email": "student@example.com",
+        "title": "Read chapter 5 of Chemistry book",
+        "description": "And summarize the key points.",
+        "deadline": "2026-03-18",
+        "student_email": "lucy@student.com",
         "logged_effort": 0.0,
         "notes": ""
     },
     {
         "id": 108,
-        "title": "test 3",
-        "description": "",
-        "deadline": "2026-03-12",
-        "student_email": "student@example.com",
+        "title": "Complete programming exercise 2",
+        "description": "The one on data structures.",
+        "deadline": "2026-03-18",
+        "student_email": "george@student.com",
         "logged_effort": 0.0,
         "notes": ""
     },
     {
         "id": 109,
-        "title": "test 4",
-        "description": "",
-        "deadline": null,
-        "student_email": "student@example.com",
-        "logged_effort": 0.0,
+        "title": "English essay",
+        "description": "Draft of the essay on Shakespeare.",
+        "deadline": "2026-03-18",
+        "student_email": "alex@student.com",
+        "logged_effort": 2.0,
         "notes": ""
     },
     {
         "id": 110,
-        "title": "test 4",
-        "description": "",
-        "deadline": null,
-        "student_email": "student@example.com",
+        "title": "Physics homework",
+        "description": "Chapter 3, problems 1-10",
+        "deadline": "2026-03-19",
+        "student_email": "alex@student.com",
         "logged_effort": 0.0,
         "notes": ""
     },
     {
         "id": 111,
-        "title": "tes4",
-        "description": "",
-        "deadline": "2026-03-12",
-        "student_email": "student@example.com",
+        "title": "Art project",
+        "description": "Still life drawing",
+        "deadline": "2026-03-20",
+        "student_email": "alex@student.com",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 112,
+        "title": "Music practice",
+        "description": "Practice scales for 30 minutes",
+        "deadline": "2026-03-21",
+        "student_email": "alex@student.com",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 113,
+        "title": "Book report",
+        "description": "Report on 'To Kill a Mockingbird'",
+        "deadline": "2026-04-10",
+        "student_email": "alex@student.com",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 114,
+        "title": "Biology lab",
+        "description": "Complete the cell mitosis lab report",
+        "deadline": "2026-03-19",
+        "student_email": "george@student.com",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 115,
+        "title": "Geography quiz preparation",
+        "description": "Study capitals of South America",
+        "deadline": "2026-03-20",
+        "student_email": "george@student.com",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 116,
+        "title": "French vocabulary",
+        "description": "Learn 20 new words",
+        "deadline": "2026-03-21",
+        "student_email": "george@student.com",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 117,
+        "title": "Physical Education log",
+        "description": "Log 3 hours of activity",
+        "deadline": "2026-04-08",
+        "student_email": "george@student.com",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 118,
+        "title": "Debate club research",
+        "description": "Research for upcoming debate topic",
+        "deadline": "2026-04-12",
+        "student_email": "george@student.com",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 119,
+        "title": "Website development task",
+        "description": "Implement a new feature on the personal project",
+        "deadline": "2026-04-15",
+        "student_email": "george@student.com",
         "logged_effort": 0.0,
         "notes": ""
     }

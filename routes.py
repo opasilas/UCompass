@@ -51,7 +51,7 @@ def index():
             return redirect(url_for('main.teacher_dashboard'))
         elif user_role == 'wellbeing_officer':
             return redirect(url_for('main.wellbeing_dashboard')) # New dashboard for wellbeing
-    return render_template('login.html')
+    return render_template('login.html', users=current_app.users_data)
 
 @main_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -77,9 +77,9 @@ def login():
         
         if not user_found:
             flash('Invalid email or password.', 'danger')
-            return render_template('login.html', email=email)
+            return render_template('login.html', email=email, users=current_app.users_data)
     
-    return render_template('login.html')
+    return render_template('login.html', users=current_app.users_data)
 
 @main_bp.route('/logout')
 def logout():
@@ -110,6 +110,9 @@ def student_dashboard():
 
     # Student tasks for calendar and lists
     student_tasks = [t for t in current_app.tasks_data if t.get('student_email') == email]
+    
+    # Sort tasks by deadline
+    student_tasks.sort(key=lambda x: (x.get('deadline') is None, x.get('deadline')))
 
     # Busiest-week alert (use >= controller.threshold)
     busiest_week_alert = False
@@ -231,11 +234,48 @@ def teacher_dashboard():
         flash('Unauthorized access.', 'danger')
         return redirect(url_for('login'))
     
-    # Placeholder for teacher-specific data
+    students = [user for user in current_app.users_data if user['role'] == 'student']
+    
     return render_template('teacher_dashboard.html', 
                             user_role=session['user_role'],
-                            all_resources=current_app.resources_data, # For Feature Two
-                            all_tasks=current_app.tasks_data) # For Feature Two (adding deadlines)
+                            all_resources=current_app.resources_data,
+                            all_tasks=current_app.tasks_data,
+                            students=students)
+
+@main_bp.route('/teacher_create_task', methods=['GET', 'POST'])
+def teacher_create_task():
+    if 'user_role' not in session or session['user_role'] != 'teacher':
+        flash('Unauthorized access.', 'danger')
+        return redirect(url_for('main.login'))
+
+    if request.method == 'POST':
+        title = request.form.get('title', '').strip()
+        description = request.form.get('description', '').strip()
+        deadline_str = request.form.get('deadline') or None
+        student_email = request.form.get('student_email')
+
+        if not title or not student_email:
+            flash('Title and student are required.', 'danger')
+            students = [user for user in current_app.users_data if user['role'] == 'student']
+            return render_template('teacher_create_task.html', students=students, title=title, description=description, deadline=deadline_str)
+
+        new_id = max([t['id'] for t in current_app.tasks_data]) + 1 if current_app.tasks_data else 1
+        new_task = {
+            'id': new_id,
+            'title': title,
+            'description': description,
+            'deadline': deadline_str,
+            'student_email': student_email,
+            'logged_effort': 0.0,
+            'notes': ''
+        }
+        current_app.tasks_data.append(new_task)
+        save_data('tasks.json', current_app.tasks_data)
+        flash('Task created successfully for ' + student_email, 'success')
+        return redirect(url_for('main.teacher_dashboard'))
+
+    students = [user for user in current_app.users_data if user['role'] == 'student']
+    return render_template('teacher_create_task.html', students=students)
 
 @main_bp.route('/wellbeing_dashboard')
 def wellbeing_dashboard():

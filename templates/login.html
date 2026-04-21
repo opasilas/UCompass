@@ -18,9 +18,9 @@
     </form>
     <p>
         <strong>Synthetic Credentials:</strong><br>
-        Student: `student@example.com` / `password`<br>
-        Teacher: `teacher@example.com` / `password`<br>
-        Wellbeing Officer: `officer@example.com` / `password`
+        {% for user in users %}
+            {{ user.name }}: `{{ user.email }}` / `{{ user.password }}`<br>
+        {% endfor %}
     </p>
 </div>
 {% endblock %}

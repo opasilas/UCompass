@@ -4,12 +4,15 @@
 
 {% block content %}
 <div class="container">
+
     <h1>Welcome, Teacher!</h1>
 
     <h2>Manage Resources</h2>
     <p><a href="{{ url_for('main.manage_resources') }}">View and Edit All Resources</a></p>
 
     <h2>Manage Student Tasks and Deadlines</h2>
+    <p><a href="{{ url_for('main.teacher_create_task') }}">Create Task for Student</a></p>
+
     {% if all_tasks %}
         <table>
             <thead>
@@ -23,18 +26,21 @@
             </thead>
             <tbody>
                 {% for task in all_tasks %}
-                <tr>
-                    <td>{{ task.id }}</td>
-                    <td>{{ task.title }}</td>
-                    <td>{{ task.student_email }}</td>
-                    <td>{{ task.deadline if task.deadline else 'No Deadline Set' }}</td>
-                    <td><a href="{{ url_for('main.add_deadline', task_id=task.id) }}">Set/Update Deadline</a></td>
-                </tr>
+                    <tr>
+                        <td>{{ task.id }}</td>
+                        <td>{{ task.title }}</td>
+                        <td>{{ task.student_email }}</td>
+                        <td>{{ task.deadline or 'No Deadline Set' }}</td>
+                        <td>
+                            <a href="{{ url_for('main.add_deadline', task_id=task.id) }}">Set/Update Deadline</a>
+                        </td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% else %}
         <p>No tasks available to manage.</p>
     {% endif %}
+
 </div>
 {% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Create Task for Student{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Create Task for Student</h1>
+    <form method="POST" action="{{ url_for('main.teacher_create_task') }}">
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ title or '' }}" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea class="form-control" id="description" name="description">{{ description or '' }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="deadline">Deadline</label>
+            <input type="date" class="form-control" id="deadline" name="deadline" value="{{ deadline or '' }}">
+        </div>
+        <div class="form-group">
+            <label for="student_email">Assign to Student</label>
+            <select class="form-control" id="student_email" name="student_email" required>
+                <option value="">Select a student</option>
+                {% for student in students %}
+                <option value="{{ student.email }}">{{ student.name }} ({{ student.email }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Create Task</button>
+    </form>
+</div>
+{% endblock %}
