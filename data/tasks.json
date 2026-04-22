@@ -97,5 +97,23 @@
         "student_email": "student@example.com",
         "logged_effort": 0.0,
         "notes": ""
+    },
+    {
+        "id": 112,
+        "title": "test 5",
+        "description": "test 5",
+        "deadline": "2026-11-26",
+        "student_email": "student@example.com",
+        "logged_effort": 4.0,
+        "notes": "\n[2026-04-22 14:57] do an extra 2 hours\n[2026-04-22 14:58] do an extra 2 hours"
+    },
+    {
+        "id": 113,
+        "title": "BUS project",
+        "description": "create a working mvp",
+        "deadline": "2026-04-23",
+        "student_email": "student@example.com",
+        "logged_effort": 0.0,
+        "notes": ""
     }
 ]
