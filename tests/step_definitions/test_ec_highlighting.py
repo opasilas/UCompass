@@ -47,7 +47,5 @@ def check_ec_resource():
     dashboard_response = client.get("/student_dashboard", follow_redirects=True)
     assert dashboard_response.status_code == 200
 
-    assert (
-        b"extenuating circumstances" in dashboard_response.data.lower()
-        or b"ec" in dashboard_response.data.lower()
-    )
+    # stricter and correct check
+    assert b"extenuating circumstances" in dashboard_response.data.lower()
