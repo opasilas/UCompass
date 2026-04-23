@@ -115,5 +115,14 @@
         "student_email": "student@example.com",
         "logged_effort": 0.0,
         "notes": ""
+    },
+    {
+        "id": 114,
+        "title": "24th",
+        "description": "Test",
+        "deadline": "2026-04-24",
+        "student_email": "student@example.com",
+        "logged_effort": 0.0,
+        "notes": ""
     }
 ]
