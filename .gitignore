@@ -2,3 +2,5 @@
 __pycache__
 *.pyctests/features/
 tests/step_definitions/
+*.pyc
+.idea/

@@ -22,6 +22,21 @@
         </div>
     {% endif %}
 
+    {% if deadline_reminders %}
+        <div class="reminders-section">
+            <h3>Upcoming Deadlines</h3>
+            {% for task in deadline_reminders %}
+                <div class="flash-message flash-info deadline-reminder">
+                    <strong>{{ task.title }}</strong> is due in
+                    <span class="days-urgent">
+                        {{ task.days_remaining }} days
+                    </span>
+                    ({{ task.deadline }}).
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
     {% if student_tasks %}
         <table>
             <thead>
