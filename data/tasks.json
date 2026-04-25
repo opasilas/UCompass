@@ -100,99 +100,27 @@
     },
     {
         "id": 112,
-        "title": "test 5",
-        "description": "test 5",
-        "deadline": "2026-11-26",
+        "title": "April 15th Test",
+        "description": "Deadline feature test",
+        "deadline": "2026-04-15",
         "student_email": "student@example.com",
-        "logged_effort": 4.0,
-        "notes": "\n[2026-04-22 14:57] do an extra 2 hours\n[2026-04-22 14:58] do an extra 2 hours"
+        "logged_effort": 0.0,
+        "notes": ""
     },
     {
         "id": 113,
-        "title": "BUS project",
-        "description": "create a working mvp",
-        "deadline": "2026-04-23",
+        "title": "April 16th test",
+        "description": "Test",
+        "deadline": "2026-04-16",
         "student_email": "student@example.com",
         "logged_effort": 0.0,
         "notes": ""
     },
     {
         "id": 114,
-        "title": "task 1",
-        "description": "test",
-        "deadline": "2026-05-01",
-        "student_email": "student@example.com",
-        "logged_effort": 0.0,
-        "notes": ""
-    },
-    {
-        "id": 115,
-        "title": "test 2",
-        "description": "test",
-        "deadline": "2026-05-02",
-        "student_email": "student@example.com",
-        "logged_effort": 0.0,
-        "notes": ""
-    },
-    {
-        "id": 116,
-        "title": "test3",
-        "description": "test",
-        "deadline": "2026-04-30",
-        "student_email": "student@example.com",
-        "logged_effort": 0.0,
-        "notes": ""
-    },
-    {
-        "id": 117,
-        "title": "test 4",
-        "description": "test",
-        "deadline": "2026-04-29",
-        "student_email": "student@example.com",
-        "logged_effort": 0.0,
-        "notes": ""
-    },
-    {
-        "id": 118,
-        "title": "test 5",
-        "description": "test",
-        "deadline": "2026-04-26",
-        "student_email": "student@example.com",
-        "logged_effort": 0.0,
-        "notes": ""
-    },
-    {
-        "id": 119,
-        "title": "test 6",
-        "description": "test",
-        "deadline": "2026-04-27",
-        "student_email": "student@example.com",
-        "logged_effort": 0.0,
-        "notes": ""
-    },
-    {
-        "id": 120,
-        "title": "test 7",
-        "description": "test",
-        "deadline": "2026-04-28",
-        "student_email": "student@example.com",
-        "logged_effort": 0.0,
-        "notes": ""
-    },
-    {
-        "id": 121,
-        "title": "test 8",
-        "description": "test",
+        "title": "24th",
+        "description": "Test",
         "deadline": "2026-04-24",
-        "student_email": "student@example.com",
-        "logged_effort": 0.0,
-        "notes": ""
-    },
-    {
-        "id": 122,
-        "title": "test 9",
-        "description": "test",
-        "deadline": "2026-04-25",
         "student_email": "student@example.com",
         "logged_effort": 0.0,
         "notes": ""

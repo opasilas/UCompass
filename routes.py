@@ -34,6 +34,30 @@ class DashboardController:
             weekly_counts[key] = weekly_counts.get(key, 0) + 1
         return weekly_counts
 
+    def get_deadline_reminders(self, student_email: str) -> list:
+        """Story S6: logic for reminders 7 days before deadline."""
+        reminders = []
+        today = datetime.now()
+        # Filter tasks for this specific student
+        student_tasks = [t for t in self.tasks if t.get('student_email') == student_email]
+
+        for task in student_tasks:
+            deadline_val = task.get('deadline')
+            if deadline_val and isinstance(deadline_val, str):
+                try:
+                    deadline_date = datetime.strptime(deadline_val, '%Y-%m-%d')
+                    # Calculate difference in days
+                    delta = (deadline_date - today).days + 1  # +1 to be inclusive of today
+
+                    # If deadline is within the next 7 days and hasn't passed
+                    if 0 <= delta <= 7:
+                        task_with_countdown = task.copy()
+                        task_with_countdown['days_remaining'] = delta
+                        reminders.append(task_with_countdown)
+                except ValueError:
+                    continue
+        return reminders
+
     def get_priority_resources(self, is_busy_week: bool):
         """Sequence Diagram S8: Fetches 'EC' support if busy, or generic if not."""
         if is_busy_week:
@@ -97,6 +121,9 @@ def student_dashboard():
 
     controller = DashboardController(current_app.tasks_data, current_app.resources_data)
     email = session['user_email']
+
+    # Get countdown reminders
+    deadline_reminders = controller.get_deadline_reminders(email)
 
     # Weekly load using controller (keys from controller may be week identifiers)
     weekly_load = controller.calculate_weekly_load(email)
@@ -223,7 +250,8 @@ def student_dashboard():
                            show_busiest_week_alert_toggle=request.args.get('show_busiest_week_alert'),
                            calendar_weeks=calendar_weeks,
                            calendar_month=calendar_month,
-                           show_calendar_busy_highlight=request.args.get('show_busiest_week_alert') == 'true')
+                           show_calendar_busy_highlight=request.args.get('show_busiest_week_alert') == 'true',
+                           deadline_reminders=deadline_reminders)
 
 @main_bp.route('/teacher_dashboard')
 def teacher_dashboard():
