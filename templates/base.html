@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}UCompass{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <style>
         /* Basic styling for flash messages */
@@ -19,15 +22,18 @@
     </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <a href="{{ url_for('main.index') }}">Home</a>
-            {% if 'user_email' in session %}
-                <a href="{{ url_for('main.logout') }}">Logout ({{ session['user_email'] }})</a>
-            {% else %}
-                <a href="{{ url_for('main.login') }}">Login</a>
-            {% endif %}
-        </nav>
+    <header class="site-header">
+        <div class="container header-grid">
+            <div class="brand">UCompass</div>
+            <nav class="nav-links">
+                <a href="{{ url_for('main.index') }}">Home</a>
+                {% if 'user_email' in session %}
+                    <a href="{{ url_for('main.logout') }}">Logout ({{ session['user_email'] }})</a>
+                {% else %}
+                    <a href="{{ url_for('main.login') }}">Login</a>
+                {% endif %}
+            </nav>
+        </div>
     </header>
     <main>
         {% with messages = get_flashed_messages(with_categories=true) %}

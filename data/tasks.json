@@ -11,20 +11,20 @@
     {
         "id": 102,
         "title": "Math Assignment 1",
-        "description": "Solve problems 1-5 from Chapter 3.",
+        "description": "Solve problems 1-5 from Chapter 3.\r\nSolve chapter 7",
         "student_email": "student@example.com",
         "deadline": "2026-03-05",
-        "logged_effort": 2.0,
-        "notes": "Completed problem 1."
+        "logged_effort": 4.0,
+        "notes": "Completed problem 1.\n[2026-04-25 09:34] almost done"
     },
     {
         "id": 103,
-        "title": "History Essay Outline",
+        "title": "History Essay Outlines",
         "description": "Outline for the Renaissance essay.",
         "student_email": "student@example.com",
         "deadline": "2026-03-07",
-        "logged_effort": 5.0,
-        "notes": "Chose topic."
+        "logged_effort": 11.0,
+        "notes": "Chose topic.\n[2026-04-25 17:30] New note test"
     },
     {
         "id": 104,
@@ -103,6 +103,15 @@
         "title": "compete online quiz",
         "description": "",
         "deadline": "2026-04-08",
+        "student_email": "student@example.com",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 114,
+        "title": "new Silas test",
+        "description": "testing 1,2",
+        "deadline": "2026-04-26",
         "student_email": "student@example.com",
         "logged_effort": 0.0,
         "notes": ""

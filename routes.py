@@ -273,9 +273,26 @@ def student_dashboard():
                            prev_month=prev_month,
                            prev_year=prev_year,
                            next_month=next_month,
-                           next_year=next_year
-                           )
+                           next_year=next_year,
                            deadline_reminders=deadline_reminders)
+
+
+@main_bp.route('/day/<date>')
+def day_view(date):
+    # Show tasks for a given date (student view)
+    if 'user_role' not in session or session['user_role'] != 'student':
+        flash('Unauthorized access.', 'danger')
+        return redirect(url_for('main.login'))
+    try:
+        date_obj = datetime.strptime(date, '%Y-%m-%d').date()
+    except ValueError:
+        flash('Invalid date.', 'danger')
+        return redirect(url_for('main.student_dashboard'))
+
+    # Filter tasks for this student on the given date
+    tasks_for_day = [t for t in current_app.tasks_data if t.get('student_email') == session['user_email'] and t.get('deadline') == date]
+
+    return render_template('day_view.html', date=date_obj, tasks=tasks_for_day)
 
 @main_bp.route('/teacher_dashboard')
 def teacher_dashboard():
@@ -406,13 +423,40 @@ def update_task(task_id):
         return redirect(url_for('main.student_dashboard'))
     
     if request.method == 'POST':
+        # Accept updates for all editable fields
+        title = request.form.get('title', '').strip()
+        description = request.form.get('description', '').strip()
+        deadline_str = request.form.get('deadline') or None
         effort_logged = request.form.get('effort_logged', type=float)
-        notes_added = request.form.get('notes_added', '')
+        notes_added = request.form.get('notes_added', '').strip()
+
+        # Update fields if provided (allow clearing by sending empty string)
+        if title:
+            task['title'] = title
+        if description or description == '':
+            task['description'] = description
+        # Validate deadline format (YYYY-MM-DD) or allow clearing
+        if deadline_str:
+            try:
+                # raises ValueError if invalid
+                datetime.strptime(deadline_str, '%Y-%m-%d')
+                task['deadline'] = deadline_str
+            except ValueError:
+                flash('Invalid deadline format. Use YYYY-MM-DD.', 'danger')
+                return render_template('update_task.html', task=task)
+        else:
+            # allow clearing deadline
+            task['deadline'] = None
 
         if effort_logged is not None:
             task['logged_effort'] = task.get('logged_effort', 0.0) + effort_logged
+
         if notes_added:
-            task['notes'] = task.get('notes', '') + f"\n[{datetime.now().strftime('%Y-%m-%d %H:%M')}] {notes_added}"
+            # Append new note under existing notes with timestamp
+            timestamp = datetime.now().strftime('%Y-%m-%d %H:%M')
+            existing = task.get('notes', '')
+            appended = f"[{timestamp}] {notes_added}"
+            task['notes'] = (existing + '\n' if existing else '') + appended
         
         save_data('tasks.json', current_app.tasks_data)
         flash(f"Task '{task['title']}' updated successfully!", 'success')
@@ -438,3 +482,31 @@ def delete_resource(resource_id):
         flash('Resource not found.', 'danger')
     
     return redirect(url_for('main.manage_resources'))
+
+
+@main_bp.route('/delete_task/<int:task_id>', methods=['POST'])
+def delete_task(task_id):
+    if 'user_role' not in session:
+        flash('Unauthorized access.', 'danger')
+        return redirect(url_for('main.login'))
+
+    # locate task
+    task = next((t for t in current_app.tasks_data if t['id'] == task_id), None)
+    if not task:
+        flash('Task not found.', 'danger')
+        return redirect(url_for('main.student_dashboard'))
+
+    # permission: students can delete their own tasks; teachers and wellbeing_officer can delete any
+    user_role = session.get('user_role')
+    if user_role == 'student' and task.get('student_email') != session.get('user_email'):
+        flash('Unauthorized to delete this task.', 'danger')
+        return redirect(url_for('main.student_dashboard'))
+
+    # remove task in-place
+    current_app.tasks_data[:] = [t for t in current_app.tasks_data if t['id'] != task_id]
+    save_data('tasks.json', current_app.tasks_data)
+    flash('Task deleted successfully.', 'success')
+
+    # support returning to a 'next' URL
+    next_url = request.form.get('next') or url_for('main.student_dashboard')
+    return redirect(next_url)

@@ -55,6 +55,6 @@ if __name__ == '__main__':
             with open(filepath, 'w') as f:
                 json.dump([], f) # Start with an empty list
 
-    with app.app_context():
-        print(app.url_map)
+    # with app.app_context():
+    #     print(app.url_map)
     app.run(debug=True, port=8000)

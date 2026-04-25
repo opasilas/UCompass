@@ -3,14 +3,37 @@
     box-sizing: border-box;
 }
 
+:root {
+    --bg: #f6f7f9;
+    --card: #ffffff;
+    --muted: #6b7280; /* slate-500 */
+    --accent: #4f46e5; /* indigo-600 */
+    --accent-600: #4338ca;
+    --success: #10b981; /* emerald-500 */
+    --danger: #ef4444;
+    --border: #e6e9ee;
+    --radius: 10px;
+    --shadow-sm: 0 1px 3px rgba(16,24,40,0.06);
+    --shadow-md: 0 6px 18px rgba(16,24,40,0.08);
+}
+
 body {
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    margin: 24px;
-    background-color: #f8f9fb;
-    color: #222;
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    margin: 0;
+    background-color: var(--bg);
+    color: #0f172a;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
 }
 
 /* Header */
+.site-header { background: white; border-bottom: 1px solid var(--border); }
+.site-header .container { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; }
+.brand { font-weight:800; color:var(--accent-600); font-size:18px; }
+.nav-links a { color:var(--muted); text-decoration:none; margin-left:18px; font-weight:600; }
+.nav-links a:hover { color:var(--accent); }
+
+/* legacy header styles (fallback) */
 .header {
     display: flex;
     justify-content: space-between;
@@ -181,9 +204,11 @@ button:hover {
     color: #666;
 }
 
-.stat-value {
-    font-size: 22px;
-    font-weight: 700;
+.day-content { flex-grow: 1; }
+.month-day .day-number a { display: block; width: 100%; color: inherit; }
+.task-link { display: inline-block; 
+    font-size: 12px;
+    font-weight: 500;
 }
 
 .stat-sub {
@@ -550,7 +575,11 @@ table tbody tr:hover {
 
 .day-content { flex-grow: 1; }
 .task-item { font-size: 0.85em; padding: 2px 0; }
-.no-tasks { color: #ccc; text-align: center; }
+.no-tasks { color: #333; text-align: center; }
+.month-day.other-month .no-tasks { color: #ccc; }
+
+.task-link { color: #0b66c3; text-decoration: none; }
+.task-link:hover { text-decoration: underline; }
 
 .busy-week-day {
     background: linear-gradient(180deg, rgba(255,230,230,0.6), rgba(255,245,245,0.6));
@@ -609,3 +638,4 @@ table tbody tr:hover {
     color: #d9534f;
     font-weight: bold;
 }
+ 
