@@ -5,7 +5,7 @@
         "description": "Build out Flask application with new features.",
         "student_email": "student@example.com",
         "deadline": "2026-03-10",
-        "logged_effort": 5.0,
+        "logged_effort": 7.0,
         "notes": "Started on feature one.\\n[2026-02-28 10:30] Researching flat file storage."
     },
     {
@@ -100,27 +100,9 @@
     },
     {
         "id": 112,
-        "title": "April 15th Test",
-        "description": "Deadline feature test",
-        "deadline": "2026-04-15",
-        "student_email": "student@example.com",
-        "logged_effort": 0.0,
-        "notes": ""
-    },
-    {
-        "id": 113,
-        "title": "April 16th test",
-        "description": "Test",
-        "deadline": "2026-04-16",
-        "student_email": "student@example.com",
-        "logged_effort": 0.0,
-        "notes": ""
-    },
-    {
-        "id": 114,
-        "title": "24th",
-        "description": "Test",
-        "deadline": "2026-04-24",
+        "title": "compete online quiz",
+        "description": "",
+        "deadline": "2026-04-08",
         "student_email": "student@example.com",
         "logged_effort": 0.0,
         "notes": ""
