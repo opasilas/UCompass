@@ -24,8 +24,8 @@
         "content": "Quick and healthy meal ideas: https://example.com/recipes",
         "created_by": "officer@example.com",
         "pinned": true,
-        "pinned_by_role": "wellbeing_officer",
-        "pinned_by": "officer@example.com"
+        "pinned_by_role": "student",
+        "pinned_by": "student@example.com"
     },
     {
         "id": 4,
@@ -34,5 +34,15 @@
         "content": "https://example.com/matj",
         "created_by": "teacher@example.com",
         "pinned": false
+    },
+    {
+        "id": 5,
+        "title": "Extenuating Circumstances",
+        "category": "Academic",
+        "content": "https://intranet.birmingham.ac.uk/student/academic-support/registry/extenuating-circumstances/index.aspx",
+        "created_by": "officer@example.com",
+        "pinned": true,
+        "pinned_by_role": "wellbeing_officer",
+        "pinned_by": "officer@example.com"
     }
 ]

@@ -1,6 +1,7 @@
 from __future__ import annotations
 from datetime import timedelta, datetime,date
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
+from markupsafe import Markup
 from app import save_data, load_data
 
 main_bp = Blueprint('main', __name__)
@@ -197,7 +198,9 @@ def student_dashboard():
 
     # Flash a RED ALERT only when the user has enabled the toggle and a busy week exists
     if show_busiest_in_session and is_busy_week:
-        flash('RED ALERT! You have more than 5 deadlines in a single week. Consider reducing workload!', 'danger')
+        flash(Markup(
+            'RED ALERT! You have more than 5 deadlines in a single week. Consider applying for <a href="#resources" class="alert-link">Extenuating Circumstances (EC)</a>.'),
+              'danger')
 
     # Student tasks for calendar and lists (sorted by deadline, earliest first; tasks without deadline last)
     def _parse_deadline_or_max(task):
