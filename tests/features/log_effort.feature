@@ -1,5 +1,8 @@
 Feature: Add effort hours
-Scenario: Log effort
-    When I edit a task and add the amount of hours "2.0"
-    Then the system should add the amount of hours to the Logged Effort column
-    And the logged effort should be named "2.0"
+
+  Scenario: Log effort on a task
+    Given the app is initialised
+    And I am logged in as a student with email "student@example.com"
+    And I have an existing task
+    When I log "2.0" hours of effort on my task
+    Then the logged effort should be "2.0"
