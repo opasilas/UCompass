@@ -141,6 +141,10 @@ def student_dashboard():
 
     email = session['user_email']
 
+
+    # Force a reload of task data to ensure freshness
+    current_app.tasks_data = load_data('tasks.json')
+
     # Map teacher-posted deadlines into task-like items for this student so they appear
     # on the calendar and in reminders without being editable by the student.
     teacher_tasks_mapped = []
@@ -780,7 +784,7 @@ def delete_task(task_id):
     # remove task in-place
     current_app.tasks_data[:] = [t for t in current_app.tasks_data if t['id'] != task_id]
     save_data('tasks.json', current_app.tasks_data)
-    flash('Task deleted successfully.', 'danger')
+    flash('Task deleted successfully.', 'success')
 
     # support returning to a 'next' URL
     next_url = request.form.get('next') or url_for('main.student_dashboard')
