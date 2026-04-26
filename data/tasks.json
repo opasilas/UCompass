@@ -51,7 +51,7 @@
     },
     {
         "id": 112,
-        "title": "compete online quiz",
+        "title": "compete two online quiz's",
         "description": "",
         "deadline": "2026-04-08",
         "student_email": "student@example.com",
@@ -148,5 +148,50 @@
         "logged_effort": 0.0,
         "notes": "",
         "editable": true
+    },
+    {
+        "id": 127,
+        "title": "Revise Machine Learning",
+        "description": "",
+        "deadline": "2026-01-05",
+        "student_email": "test@test.com",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 128,
+        "title": "Revise Machine Learning",
+        "description": "",
+        "deadline": "2026-01-05",
+        "student_email": "test@test.com",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 129,
+        "title": "Revise Machine Learning",
+        "description": "",
+        "deadline": "2026-01-05",
+        "student_email": "test@test.com",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 130,
+        "title": "Revise Machine Learning",
+        "description": "",
+        "deadline": "2026-01-05",
+        "student_email": "test@test.com",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 131,
+        "title": "Revise Machine Learning",
+        "description": "",
+        "deadline": "2026-01-05",
+        "student_email": "test@test.com",
+        "logged_effort": 0.0,
+        "notes": ""
     }
 ]

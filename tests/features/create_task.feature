@@ -1,4 +1,5 @@
-Scenario: Add a new task
-    When I add a task called "Revise Machine Learning" on "05-01-2026"
-    Then the system should add this task
-    And the event name should be named "Revise Machine Learning"
+Feature: Create new task
+
+  Scenario: Add a new task
+    When I add a task called "Revise Machine Learning" with a "2026-01-05"
+    Then the task "Revise Machine Learning" with deadline "2026-01-05" should be added
