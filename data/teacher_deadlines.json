@@ -1,0 +1,44 @@
+[
+    {
+        "id": 1,
+        "title": "Module 1 Assignment",
+        "module": "CS101",
+        "deadline": "2026-05-02",
+        "created_by": "teacher@example.com"
+    },
+    {
+        "id": 2,
+        "title": "Midterm Exam",
+        "module": "MATH201",
+        "deadline": "2026-05-10",
+        "created_by": "teacher2@example.com"
+    },
+    {
+        "id": 3,
+        "title": "Coursework Submission",
+        "module": "ENG150",
+        "deadline": "2026-05-07",
+        "created_by": "teacher@example.com"
+    },
+    {
+        "id": 4,
+        "title": "Wellbeing Check-in",
+        "module": "WELL",
+        "deadline": "2026-05-04",
+        "created_by": "wellbeing@example.com"
+    },
+    {
+        "id": 5,
+        "title": "Project Milestone 1",
+        "module": "CS102",
+        "deadline": "2026-05-15",
+        "created_by": "teacher3@example.com"
+    },
+    {
+        "id": 6,
+        "title": "Software Test",
+        "module": "SFW504",
+        "deadline": "2026-05-08",
+        "created_by": "teacher@example.com"
+    }
+]

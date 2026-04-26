@@ -90,6 +90,9 @@ def login():
             if user['email'] == email and user['password'] == password: # In real app, hash passwords!
                 session['user_email'] = user['email']
                 session['user_role'] = user['role']
+                # default the busiest-week toggle to off on login
+                if user['role'] == 'student':
+                    session['show_busiest_week_alert'] = 'false'
                 user_found = True
                 flash(f"Welcome, {user['name']}!", 'success')
                 if user['role'] == 'student':
@@ -119,8 +122,26 @@ def student_dashboard():
         flash('Unauthorized access.', 'danger')
         return redirect(url_for('main.login'))
 
-    controller = DashboardController(current_app.tasks_data, current_app.resources_data)
     email = session['user_email']
+
+    # Map teacher-posted deadlines into task-like items for this student so they appear
+    # on the calendar and in reminders without being editable by the student.
+    teacher_tasks_mapped = []
+    for d in getattr(current_app, 'teacher_deadlines_data', []) or []:
+        mapped = {
+            'id': f"td-{d.get('id')}",
+            'title': d.get('title'),
+            'description': d.get('module', ''),
+            'deadline': d.get('deadline'),
+            'student_email': email,  # attach to current student for view-only display
+            'notes': 'teacher generated deadline',
+            'teacher_generated': True
+        }
+        teacher_tasks_mapped.append(mapped)
+
+    # Create a merged task list used by the controller so weekly-load and reminders include teacher deadlines
+    merged_tasks_for_controller = list(current_app.tasks_data) + teacher_tasks_mapped
+    controller = DashboardController(merged_tasks_for_controller, current_app.resources_data)
 
     # Get countdown reminders
     deadline_reminders = controller.get_deadline_reminders(email)
@@ -131,17 +152,46 @@ def student_dashboard():
     # Use controller.threshold and >= as requested
     is_busy_week = any(count >= controller.threshold for count in weekly_load.values())
 
-    # Toggle for fetching priority resources
+    # Toggle for fetching priority resources (legacy param)
     toggle_on = request.args.get('busy_toggle') == 'on'
     display_resources = controller.get_priority_resources(is_busy_week and toggle_on)
 
-    # Student tasks for calendar and lists
-    student_tasks = [t for t in current_app.tasks_data if t.get('student_email') == email]
+    # Persist show_busiest_week_alert in session so it survives month navigation
+    arg_values = request.args.getlist('show_busiest_week_alert')
+    if arg_values:
+        # If any value is 'true', consider it enabled (handles both hidden+checkbox inputs)
+        session['show_busiest_week_alert'] = 'true' if 'true' in arg_values else 'false'
+    # Final value used to drive calendar highlighting
+    show_busiest_in_session = session.get('show_busiest_week_alert', 'false') == 'true'
 
-    # Busiest-week alert (use >= controller.threshold)
-    busiest_week_alert = False
-    if request.args.get('show_busiest_week_alert') == 'true':
-        busiest_week_alert = any(count >= controller.threshold for count in weekly_load.values())
+    # Student tasks for calendar and lists (sorted by deadline, earliest first; tasks without deadline last)
+    def _parse_deadline_or_max(task):
+        d = task.get('deadline')
+        if d and isinstance(d, str):
+            try:
+                return datetime.strptime(d, '%Y-%m-%d').date()
+            except ValueError:
+                return date.max
+        return date.max
+
+    # Build student-visible tasks by merging actual student tasks with teacher-generated tasks.
+    student_tasks = [t for t in merged_tasks_for_controller if t.get('student_email') == email]
+    # Add an explicit `editable` flag for template logic (students cannot edit teacher-generated entries)
+    for t in student_tasks:
+        t['editable'] = not bool(t.get('teacher_generated'))
+    student_tasks = sorted(student_tasks, key=_parse_deadline_or_max)
+
+    # Resource category filter (All / Academic / Wellbeing)
+    resource_category = request.args.get('resource_category', 'all')
+    if resource_category and resource_category.lower() != 'all':
+        filtered_resources = [r for r in current_app.resources_data if (r.get('category') or '').lower() == resource_category.lower()]
+    else:
+        filtered_resources = list(current_app.resources_data)
+    # Pinned resources should always be computed from the full dataset and not affected by category filters
+    pinned_resources = [r for r in current_app.resources_data if r.get('pinned')]
+
+    # Busiest-week alert (use >= controller.threshold as requested)
+    busiest_week_alert = any(count >= controller.threshold for count in weekly_load.values())
 
     # Calendar View Data Generation
     today = datetime.now().date()
@@ -171,7 +221,7 @@ def student_dashboard():
                 'deadlines_count': len(tasks_on_day)
             })
 
-        # Keep busy logic at week level using controller.threshold
+        # Keep busy logic at week level using controller.threshold; highlight when >= threshold
         is_week_busy = week_count >= controller.threshold
 
         week_info = {
@@ -257,17 +307,28 @@ def student_dashboard():
     else:
         next_month, next_year = month + 1, year
 
+    # Resolve student name for greeting
+    student_name = None
+    for u in current_app.users_data:
+        if u.get('email') == email:
+            student_name = u.get('name')
+            break
+
     return render_template('student_dashboard.html',
                            student_email=session['user_email'],
                            student_tasks=student_tasks,
                            resources=display_resources,
+                           all_resources=filtered_resources,
+                           pinned_resources=pinned_resources,
+                           selected_resource_category=resource_category,
                            is_busy=is_busy_week,
                            toggle_on=toggle_on,
                            busiest_week_alert=busiest_week_alert,
-                           show_busiest_week_alert_toggle=request.args.get('show_busiest_week_alert'),
+                           show_busiest_week_alert_toggle=session.get('show_busiest_week_alert', 'false'),
                            calendar_weeks=calendar_weeks,
                            calendar_month=calendar_month,
-                           show_calendar_busy_highlight=request.args.get('show_busiest_week_alert') == 'true',
+                           show_calendar_busy_highlight=show_busiest_in_session,
+                           student_name=student_name,
                            current_month=month,
                            current_year=year,
                            prev_month=prev_month,
@@ -289,8 +350,21 @@ def day_view(date):
         flash('Invalid date.', 'danger')
         return redirect(url_for('main.student_dashboard'))
 
-    # Filter tasks for this student on the given date
+    # Filter tasks for this student on the given date, including teacher-posted deadlines mapped for this student
     tasks_for_day = [t for t in current_app.tasks_data if t.get('student_email') == session['user_email'] and t.get('deadline') == date]
+    # include teacher deadlines that match this date
+    for d in getattr(current_app, 'teacher_deadlines_data', []) or []:
+        if d.get('deadline') == date:
+            tasks_for_day.append({
+                'id': f"td-{d.get('id')}",
+                'title': d.get('title'),
+                'description': d.get('module', ''),
+                'deadline': d.get('deadline'),
+                'student_email': session['user_email'],
+                'notes': 'teacher generated deadline',
+                'teacher_generated': True,
+                'editable': False
+            })
 
     return render_template('day_view.html', date=date_obj, tasks=tasks_for_day)
 
@@ -300,11 +374,18 @@ def teacher_dashboard():
         flash('Unauthorized access.', 'danger')
         return redirect(url_for('login'))
     
-    # Placeholder for teacher-specific data
+    # Teacher-specific resources (those created by this user)
+    teacher_email = session.get('user_email')
+    teacher_resources = [r for r in current_app.resources_data if r.get('created_by') == teacher_email]
+
+    # All posted deadlines created by teachers (central list)
+    posted_deadlines = getattr(current_app, 'teacher_deadlines_data', []) or []
+
     return render_template('teacher_dashboard.html', 
                             user_role=session['user_role'],
-                            all_resources=current_app.resources_data, # For Feature Two
-                            all_tasks=current_app.tasks_data) # For Feature Two (adding deadlines)
+                            teacher_resources=teacher_resources,
+                            posted_deadlines=posted_deadlines,
+                            all_tasks=current_app.tasks_data)
 
 @main_bp.route('/wellbeing_dashboard')
 def wellbeing_dashboard():
@@ -317,6 +398,18 @@ def wellbeing_dashboard():
                             all_resources=current_app.resources_data,
                             all_tasks=current_app.tasks_data) # For Feature Two (adding deadlines)
 
+
+@main_bp.route('/resources')
+def resources_page():
+    if 'user_email' not in session:
+        flash('Please log in to view resources.', 'danger')
+        return redirect(url_for('main.login'))
+
+    # Show pinned and all resources to logged-in users
+    pinned = [r for r in current_app.resources_data if r.get('pinned')]
+    others = [r for r in current_app.resources_data if not r.get('pinned')]
+    return render_template('resources.html', pinned_resources=pinned, all_resources=others)
+
 # Placeholder for Feature Two: Add/Edit Resources
 @main_bp.route('/manage_resources', methods=['GET', 'POST'])
 def manage_resources():
@@ -324,10 +417,16 @@ def manage_resources():
         flash('Unauthorized access.', 'danger')
         return redirect(url_for('main.login'))
     
+    resource_to_edit = None
+    # If a GET parameter resource_id is passed, attempt to load the resource for editing
+    if request.method == 'GET' and request.args.get('resource_id'):
+        rid = request.args.get('resource_id')
+        resource_to_edit = next((r for r in current_app.resources_data if str(r.get('id')) == str(rid)), None)
+
     if request.method == 'POST':
         resource_id = request.form.get('resource_id')
         title = request.form['title']
-        category = request.form['category']
+        category = request.form.get('category')
         content = request.form['content']
         
         if resource_id: # Update existing
@@ -340,6 +439,14 @@ def manage_resources():
             flash('Resource updated successfully!', 'success')
         else: # Add new
             new_id = max([r['id'] for r in current_app.resources_data]) + 1 if current_app.resources_data else 1
+            # Default category by creator role if not provided
+            if not category:
+                if session.get('user_role') == 'teacher':
+                    category = 'Academic'
+                elif session.get('user_role') == 'wellbeing_officer':
+                    category = 'Wellbeing'
+                else:
+                    category = 'General'
             new_resource = {
                 'id': new_id,
                 'title': title,
@@ -352,7 +459,7 @@ def manage_resources():
         save_data('resources.json', current_app.resources_data)
         return redirect(url_for('main.manage_resources'))
         
-    return render_template('manage_resources.html', all_resources=current_app.resources_data)
+    return render_template('manage_resources.html', all_resources=current_app.resources_data, resource=resource_to_edit)
 
 # Placeholder for Feature Two: Add Deadlines to Tasks
 @main_bp.route('/add_deadline/<int:task_id>', methods=['GET', 'POST'])
@@ -374,6 +481,78 @@ def add_deadline(task_id):
         return redirect(url_for('main.teacher_dashboard'))
     
     return render_template('add_deadline.html', task=task)
+
+
+@main_bp.route('/teacher_deadlines/create', methods=['POST'])
+def create_teacher_deadline():
+    if 'user_role' not in session or session['user_role'] not in ['teacher', 'wellbeing_officer']:
+        flash('Unauthorized access.', 'danger')
+        return redirect(url_for('main.login'))
+
+    title = request.form.get('title', '').strip()
+    module = request.form.get('module', '').strip()
+    deadline_str = request.form.get('deadline')
+    if not title or not deadline_str:
+        flash('Title and deadline are required.', 'danger')
+        return redirect(url_for('main.teacher_dashboard'))
+
+    new_id = max([d['id'] for d in current_app.teacher_deadlines_data]) + 1 if current_app.teacher_deadlines_data else 1
+    new_deadline = {
+        'id': new_id,
+        'title': title,
+        'module': module,
+        'deadline': deadline_str,
+        'created_by': session['user_email']
+    }
+    current_app.teacher_deadlines_data.append(new_deadline)
+    save_data('teacher_deadlines.json', current_app.teacher_deadlines_data)
+    flash('Deadline posted successfully!', 'success')
+    return redirect(url_for('main.teacher_dashboard'))
+
+
+@main_bp.route('/teacher_deadlines/delete/<int:deadline_id>', methods=['POST'])
+def delete_teacher_deadline(deadline_id):
+    if 'user_role' not in session or session['user_role'] not in ['teacher', 'wellbeing_officer']:
+        flash('Unauthorized access.', 'danger')
+        return redirect(url_for('main.login'))
+
+    initial = len(current_app.teacher_deadlines_data)
+    current_app.teacher_deadlines_data = [d for d in current_app.teacher_deadlines_data if d.get('id') != deadline_id]
+    if len(current_app.teacher_deadlines_data) < initial:
+        save_data('teacher_deadlines.json', current_app.teacher_deadlines_data)
+        flash('Deadline deleted.', 'success')
+    else:
+        flash('Deadline not found.', 'danger')
+    return redirect(url_for('main.teacher_dashboard'))
+
+
+@main_bp.route('/teacher_deadlines/edit/<int:deadline_id>', methods=['GET', 'POST'])
+def edit_teacher_deadline(deadline_id):
+    if 'user_role' not in session or session['user_role'] not in ['teacher', 'wellbeing_officer']:
+        flash('Unauthorized access.', 'danger')
+        return redirect(url_for('main.login'))
+
+    deadline = next((d for d in current_app.teacher_deadlines_data if d.get('id') == deadline_id), None)
+    if not deadline:
+        flash('Deadline not found.', 'danger')
+        return redirect(url_for('main.teacher_dashboard'))
+
+    if request.method == 'POST':
+        title = request.form.get('title', '').strip()
+        module = request.form.get('module', '').strip()
+        deadline_str = request.form.get('deadline')
+        if not title or not deadline_str:
+            flash('Title and deadline are required.', 'danger')
+            return redirect(url_for('main.edit_teacher_deadline', deadline_id=deadline_id))
+
+        deadline['title'] = title
+        deadline['module'] = module
+        deadline['deadline'] = deadline_str
+        save_data('teacher_deadlines.json', current_app.teacher_deadlines_data)
+        flash('Deadline updated.', 'success')
+        return redirect(url_for('main.teacher_dashboard'))
+
+    return render_template('edit_teacher_deadline.html', deadline=deadline)
 
 
 # Student: create a new task (can be pre-filled with ?deadline=YYYY-MM-DD)
@@ -505,8 +684,25 @@ def delete_task(task_id):
     # remove task in-place
     current_app.tasks_data[:] = [t for t in current_app.tasks_data if t['id'] != task_id]
     save_data('tasks.json', current_app.tasks_data)
-    flash('Task deleted successfully.', 'success')
+    flash('Task deleted successfully.', 'danger')
 
     # support returning to a 'next' URL
     next_url = request.form.get('next') or url_for('main.student_dashboard')
     return redirect(next_url)
+
+
+@main_bp.route('/pin_resource/<int:resource_id>', methods=['POST'])
+def pin_resource(resource_id):
+    if 'user_role' not in session:
+        flash('Unauthorized access.', 'danger')
+        return redirect(url_for('main.login'))
+
+    # Toggle pinned flag on resource
+    for res in current_app.resources_data:
+        if res.get('id') == resource_id:
+            res['pinned'] = not res.get('pinned', False)
+            save_data('resources.json', current_app.resources_data)
+            break
+
+    # Return back to dashboard
+    return redirect(url_for('main.student_dashboard'))

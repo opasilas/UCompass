@@ -4,7 +4,7 @@
         "title": "Complete Flask Project",
         "description": "Build out Flask application with new features.",
         "student_email": "student@example.com",
-        "deadline": "2026-03-10",
+        "deadline": "2026-04-29",
         "logged_effort": 7.0,
         "notes": "Started on feature one.\\n[2026-02-28 10:30] Researching flat file storage."
     },
@@ -54,51 +54,6 @@
         "notes": ""
     },
     {
-        "id": 107,
-        "title": "another test",
-        "description": "hello",
-        "deadline": "2026-03-12",
-        "student_email": "student@example.com",
-        "logged_effort": 0.0,
-        "notes": ""
-    },
-    {
-        "id": 108,
-        "title": "test 3",
-        "description": "",
-        "deadline": "2026-03-12",
-        "student_email": "student@example.com",
-        "logged_effort": 0.0,
-        "notes": ""
-    },
-    {
-        "id": 109,
-        "title": "test 4",
-        "description": "",
-        "deadline": null,
-        "student_email": "student@example.com",
-        "logged_effort": 0.0,
-        "notes": ""
-    },
-    {
-        "id": 110,
-        "title": "test 4",
-        "description": "",
-        "deadline": null,
-        "student_email": "student@example.com",
-        "logged_effort": 0.0,
-        "notes": ""
-    },
-    {
-        "id": 111,
-        "title": "tes4",
-        "description": "",
-        "deadline": "2026-03-12",
-        "student_email": "student@example.com",
-        "logged_effort": 0.0,
-        "notes": ""
-    },
-    {
         "id": 112,
         "title": "compete online quiz",
         "description": "",
@@ -112,6 +67,33 @@
         "title": "new Silas test",
         "description": "testing 1,2",
         "deadline": "2026-04-26",
+        "student_email": "student@example.com",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 115,
+        "title": "entirely new task",
+        "description": "this is a new task",
+        "deadline": "2026-04-19",
+        "student_email": "student@example.com",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 116,
+        "title": "Due Test for next week",
+        "description": "test",
+        "deadline": "2026-04-29",
+        "student_email": "student@example.com",
+        "logged_effort": 0.0,
+        "notes": ""
+    },
+    {
+        "id": 117,
+        "title": "test highlight button",
+        "description": "birds",
+        "deadline": "2026-03-12",
         "student_email": "student@example.com",
         "logged_effort": 0.0,
         "notes": ""

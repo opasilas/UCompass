@@ -1,33 +1,50 @@
 {% extends "base.html" %}
+
+{% block title %}Resources - UCompass{% endblock %}
+
 {% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-10 mx-auto">
+            <h1>Wellbeing Resources</h1>
+            <p class="text-muted">Browse resources and support available to students.</p>
 
-<h2>Resources</h2>
-<p class="muted">Browse wellbeing resources available to all students.</p>
+            {% if resources %}
+                <div class="d-flex gap-md flex-column mb-4">
+                    {% for r in resources %}
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex justify-between align-center">
+                                    <div>
+                                        <div class="d-flex gap-2 align-center mb-2">
+                                            <h3 class="mb-0">{{ r.title }}</h3>
+                                            {% if r.category %}
+                                                <span class="badge bg-primary">{{ r.category }}</span>
+                                            {% endif %}
+                                        </div>
+                                        <p class="text-muted small mb-0">Managed by Officer #{{ r.officer_id }}</p>
+                                    </div>
+                                </div>
 
-{% if resources %}
-  {% for r in resources %}
-    <div class="card">
-      <div class="row row-between row-center">
-        <div>
-          <div class="title-row">
-            <strong class="title">{{ r.title }}</strong>
-            {% if r.category %}
-              <span class="pill">{{ r.category }}</span>
+                                {% if r.content %}
+                                    <p class="mt-3 mb-0">{{ r.content }}</p>
+                                {% else %}
+                                    <p class="text-muted mt-3 mb-0">No description provided.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <p class="mb-0">No resources available at this time.</p>
+                </div>
             {% endif %}
-          </div>
-          <div class="small-text">Managed by officer #{{ r.officer_id }}</div>
+
+            <div class="mt-4">
+                <a href="{{ url_for('main.student_dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+            </div>
         </div>
-      </div>
-
-      {% if r.content %}
-        <p class="paragraph top-space-sm">{{ r.content }}</p>
-      {% else %}
-        <p class="muted top-space-sm">No description provided.</p>
-      {% endif %}
     </div>
-  {% endfor %}
-{% else %}
-  <p class="muted">No resources available.</p>
-{% endif %}
-
+</div>
 {% endblock %}

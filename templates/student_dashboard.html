@@ -3,150 +3,214 @@
 {% block title %}Student Dashboard{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Welcome, Student!</h1>
-    <h2>Your Deadlines and Tasks</h2>
-        <div class="row-between top-space">
-            <form action="{{ url_for('main.create_task') }}" method="get">
-                <button class="add-task-btn">Add New Task</button>
-            </form>
-        </div>
+<div class="container-fluid">
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <!-- Profile/Urgent Deadlines Card -->
+            <div class="sidebar-card">
+                <h3>Upcoming Deadlines</h3>
+                {% if deadline_reminders %}
+                    <ul>
+                        {% for task in deadline_reminders %}
+                            <li>
+                                    <strong>{{ task.title }}</strong>
+                                    {% if task.teacher_generated %}
+                                        <span class="badge bg-secondary ms-2">Teacher</span>
+                                    {% endif %}
+                                    <div class="text-muted small">Due in <span class="deadline-days">{{ task.days_remaining }} days</span></div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">No urgent deadlines</p>
+                {% endif %}
+            </div>
 
-<form action="{{ url_for('main.student_dashboard') }}" method="get">
-        <label for="busiest_week_toggle">Show Busiest Week Alert:</label>
-        <input type="checkbox" id="busiest_week_toggle" name="show_busiest_week_alert" value="true" onchange="this.form.submit()" {% if show_busiest_week_alert_toggle == 'true' %}checked{% endif %}>
-    </form>
+            <!-- Task Details (moved from main column) -->
+            <div class="sidebar-card">
+                <h3>Your Tasks</h3>
+                {% if student_tasks %}
+                    <ul>
+                        {% for t in student_tasks %}
+                                <li class="task-item">
+                                <strong>{{ t.title }}</strong>
+                                <div class="text-muted small">Due: {{ t.deadline if t.deadline else '—' }} • {{ t.logged_effort }} hrs
+                                    <span class="task-actions-compact">
+                                        {% if t.editable %}
+                                            <a href="{{ url_for('main.update_task', task_id=t.id) }}" class="edit-bin" title="Edit">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4h6a1 1 0 0 1 1 1v6"/><path d="M21 21l-6-6"/><path d="M7 7L3 21h18"/></svg>
+                                            </a>
+                                            <form method="post" action="{{ url_for('main.delete_task', task_id=t.id) }}" class="delete-task-form d-inline">
+                                                <input type="hidden" name="next" value="{{ url_for('main.student_dashboard') }}">
+                                                <button type="submit" class="btn delete-bin" title="Delete task">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Teacher</span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted small">No tasks assigned yet.</p>
+                {% endif %}
+            </div>
 
-    {% if busiest_week_alert %}
-        <div class="flash-message flash-danger">
-            <strong>RED ALERT!</strong> You have more than 5 deadlines in a single week. Consider reducing workload!
-        </div>
-    {% endif %}
-
-    {% if deadline_reminders %}
-        <div class="reminders-section">
-            <h3>Upcoming Deadlines</h3>
-            {% for task in deadline_reminders %}
-                <div class="flash-message flash-info deadline-reminder">
-                    <strong>{{ task.title }}</strong> is due in
-                    <span class="days-urgent">
-                        {{ task.days_remaining }} days
-                    </span>
-                    ({{ task.deadline }}).
+            <!-- Busiest Week Alert -->
+            {% if busiest_week_alert %}
+                <div class="alert alert-danger">
+                    <strong>RED ALERT!</strong> You have more than 5 deadlines in a single week. Consider reducing workload!
                 </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-    
-        <h2>Calendar View</h2>
-<div class="calendar-container">
-    {% if calendar_month %}
-        <div class="month-calendar">
-            <div class="calendar-header">
-    <a href="{{ url_for('main.student_dashboard', month=prev_month, year=prev_year) }}" class="nav-btn">←</a>
+            {% endif %}
+        </aside>
 
-    <h2 class="month-title">{{ calendar_month.month }} {{ calendar_month.year }}</h2>
-
-    <a href="{{ url_for('main.student_dashboard', month=next_month, year=next_year) }}" class="nav-btn">→</a>
-</div>
-
-            <div class="weekday-row">
-                <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header with Title and Add Task Button -->
+            <div class="d-flex justify-content-between align-items-center mb-md">
+                <h1>Welcome, {{ student_name or 'Student' }}</h1>
+                <a href="{{ url_for('main.create_task') }}" class="btn btn-primary">Add New Task</a>
             </div>
-            <div class="month-grid">
-                {% for week in calendar_month.weeks %}
-                    {% for day in week.days %}
-                        <div class="month-day {% if not day.in_month %}other-month{% endif %} {% if show_calendar_busy_highlight and week.is_busy %}busy-week-day{% endif %}">
-                            <div class="day-number">
-                                <a href="{{ url_for('main.day_view', date=day.date.isoformat()) }}">{{ day.date.day }}</a>
-                            </div>
-                            <div class="day-content">
-                                {% if day.deadlines_count > 0 %}
-                                    <ul class="task-list">
-                                        {% for t in day.tasks %}
-                                            <li><a class="task-link" href="{{ url_for('main.update_task', task_id=t.id) }}">{{ t.title }}</a></li>
-                                        {% endfor %}
-                                    </ul>
-                                {% else %}
-                                    <div class="no-tasks">&nbsp;</div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% endfor %}
-            </div>
-        </div>
-    {% endif %}
-</div>
 
-    {% if student_tasks %}
-        <div class="grid cols-2">
-            {% for task in student_tasks %}
-                <div class="card">
-                    <div style="display:flex;justify-content:space-between;align-items:start;gap:12px;">
-                        <div>
-                            <div class="title">{{ task.title }}</div>
-                            <div class="subtitle">{{ task.description }}</div>
+            <!-- Calendar Section -->
+            <div class="card mb-md">
+                <div class="card-body">
+                    <h2>Calendar</h2>
+
+                    <form id="toggleForm" action="{{ url_for('main.student_dashboard') }}" method="get" class="mb-3">
+                        <input type="hidden" name="month" value="{{ current_month }}">
+                        <input type="hidden" name="year" value="{{ current_year }}">
+                        <input type="hidden" id="busiest_flag" name="show_busiest_week_alert" value="{{ 'true' if show_calendar_busy_highlight else 'false' }}">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="busiest_week_toggle" {% if show_calendar_busy_highlight %}checked{% endif %} onchange="document.getElementById('busiest_flag').value = this.checked ? 'true' : 'false'; this.form.submit();">
+                            <label class="form-check-label" for="busiest_week_toggle">Show Busiest Week Highlighting</label>
                         </div>
-                        <div style="text-align:right;">
-                            <div class="muted">Deadline</div>
-                            <div>{{ task.deadline if task.deadline else '—' }}</div>
-                            <div class="muted" style="margin-top:8px;">Effort</div>
-                            <div>{{ task.logged_effort }} hrs</div>
+                    </form>
+
+                    {% if calendar_month %}
+                        <div class="calendar-header">
+                            {% if show_calendar_busy_highlight %}
+                                <a class="btn btn-outline-secondary" href="{{ url_for('main.student_dashboard', month=prev_month, year=prev_year, show_busiest_week_alert='true') }}">‹</a>
+                            {% else %}
+                                <a class="btn btn-outline-secondary" href="{{ url_for('main.student_dashboard', month=prev_month, year=prev_year) }}">‹</a>
+                            {% endif %}
+                            <h2>{{ calendar_month.month }} {{ calendar_month.year }}</h2>
+                            {% if show_calendar_busy_highlight %}
+                                <a class="btn btn-outline-secondary" href="{{ url_for('main.student_dashboard', month=next_month, year=next_year, show_busiest_week_alert='true') }}">›</a>
+                            {% else %}
+                                <a class="btn btn-outline-secondary" href="{{ url_for('main.student_dashboard', month=next_month, year=next_year) }}">›</a>
+                            {% endif %}
                         </div>
-                    </div>
-                    <div class="top-space" style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;">
-                        <div style="max-width:70%"><div class="muted">Notes</div><div class="notes">{{ task.notes if task.notes else 'No notes' }}</div></div>
-                        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
-                            <a class="btn btn-ghost" href="{{ url_for('main.update_task', task_id=task.id) }}">Edit</a>
-                            <form action="{{ url_for('main.delete_task', task_id=task.id) }}" method="post" onsubmit="return confirm('Delete this task?')">
-                                <input type="hidden" name="next" value="{{ url_for('main.student_dashboard') }}">
-                                <button class="btn btn-danger" type="submit">Delete</button>
+
+                        <div class="weekday-row">
+                            <div>Sun</div>
+                            <div>Mon</div>
+                            <div>Tue</div>
+                            <div>Wed</div>
+                            <div>Thu</div>
+                            <div>Fri</div>
+                            <div>Sat</div>
+                        </div>
+
+                        <div class="month-grid">
+                            {% for week in calendar_month.weeks %}
+                                {% for day in week.days %}
+                                    <div class="month-day {% if not day.in_month %}other-month{% endif %} {% if show_calendar_busy_highlight and week.is_busy %}busy-week-day{% endif %}">
+                                        <div class="day-number">
+                                            <a href="{{ url_for('main.day_view', date=day.date.isoformat()) }}">{{ day.date.day }}</a>
+                                        </div>
+                                        <div class="day-content">
+                                            {% if day.deadlines_count > 0 %}
+                                                <ul class="task-list">
+                                                    {% for t in day.tasks %}
+                                                        <li>
+                                                            {% if t.editable %}
+                                                                <a class="task-link" href="{{ url_for('main.update_task', task_id=t.id) }}">{{ t.title }}</a>
+                                                            {% else %}
+                                                                <span class="text-muted">{{ t.title }} <small class="badge bg-secondary">Teacher</small></span>
+                                                            {% endif %}
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% else %}
+                                                <div class="no-tasks">&nbsp;</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Tasks moved to left column; summary here -->
+            <div id="resources" class="card mb-3">
+                <div class="card-body">
+                    <h3>Resources</h3>
+                    <div class="resource-list">
+                        {% set pinned = pinned_resources %}
+                        {% set others = all_resources %}
+
+                        {% if pinned %}
+                            <h4>Pinned Resources</h4>
+                            {% for r in pinned %}
+                                <div class="resource-card mb-2 pinned">
+                                    <form method="post" action="{{ url_for('main.pin_resource', resource_id=r.id) }}" class="pin-form">
+                                        <button type="submit" class="btn-pin" title="Unpin resource">📌</button>
+                                    </form>
+                                    <h4 class="resource-title">{{ r.title }}</h4>
+                                    <div class="text-muted small">{{ r.category }}</div>
+                                    <p class="resource-content">{{ r.content }}</p>
+                                </div>
+                            {% endfor %}
+                            <hr>
+                        {% endif %}
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-1">All Resources</h4>
+                            <form class="ms-2" method="get" action="{{ url_for('main.student_dashboard') }}">
+                                <input type="hidden" name="month" value="{{ current_month }}">
+                                <input type="hidden" name="year" value="{{ current_year }}">
+                                <input type="hidden" name="show_busiest_week_alert" value="{{ 'true' if show_calendar_busy_highlight else 'false' }}">
+                                <select name="resource_category" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    <option value="all" {% if selected_resource_category == 'all' %}selected{% endif %}>All</option>
+                                    <option value="Academic" {% if selected_resource_category == 'Academic' %}selected{% endif %}>Academic</option>
+                                    <option value="Wellbeing" {% if selected_resource_category == 'Wellbeing' %}selected{% endif %}>Wellbeing</option>
+                                </select>
                             </form>
                         </div>
+                        {% if others %}
+                            {% for r in others %}
+                                <div class="resource-card mb-2">
+                                    <form method="post" action="{{ url_for('main.pin_resource', resource_id=r.id) }}" class="pin-form">
+                                        <button type="submit" class="btn-pin" title="Pin resource">📌</button>
+                                    </form>
+                                    <h4 class="resource-title">{{ r.title }}</h4>
+                                    <div class="text-muted small">{{ r.category }}</div>
+                                    <p class="resource-content">{{ r.content }}</p>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted mb-0">No resources posted yet.</p>
+                        {% endif %}
                     </div>
                 </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p class="muted">No tasks assigned yet.</p>
-    {% endif %}
-
-    <h2>Key Support Information</h2>
-    <p>Need help? Contact your academic advisor or wellbeing officer.</p>
-    <!-- More support info here -->
-
-    <h2>Resources</h2>
-    {% if resources %}
-      {% for r in resources %}
-        <div class="card">
-          <div class="row row-between row-center">
-            <div>
-              <div class="title-row">
-                <strong class="title">{{ r.title }}</strong>
-                {% if r.category %}
-                  <span class="pill">{{ r.category }}</span>
-                {% endif %}
-              </div>
             </div>
-          </div>
 
-          {% if r.content %}
-            <p class="paragraph top-space-sm">{{ r.content }}</p>
-          {% else %}
-            <p class="muted top-space-sm">No description provided.</p>
-          {% endif %}
-        </div>
-      {% endfor %}
-    {% else %}
-      <p class="muted">No resources available.</p>
-    {% endif %}
+            <!-- Support Information -->
+            <div class="card mt-5">
+                <div class="card-body">
+                    <h3>Need Help?</h3>
+                    <p class="text-muted">Contact your academic advisor or wellbeing officer for support and guidance.</p>
+                </div>
+            </div>
+        </main>
+    </div>
 </div>
-<style>
-/* Minimal calendar tweaks: keep day-number link prominent and task bullets */
-.month-day .day-number a { text-decoration: none; color: inherit; font-weight: 800; }
-.task-list { margin: 0 0 0 1em; padding: 0; }
-.task-list li { list-style-type: disc; margin: 4px 0; }
-.month-day:hover { box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-</style>
 {% endblock %}
+

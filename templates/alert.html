@@ -1,32 +1,54 @@
 {% extends "base.html" %}
+
+{% block title %}Workload Alert{% endblock %}
+
 {% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1>Workload Status</h1>
 
-<h2>Alert</h2>
+            <div class="card">
+                <div class="card-body">
+                    <h3>{{ student.name }}</h3>
+                    <p class="text-muted">
+                        <strong>Week:</strong> {{ week.week_start }} to {{ week.week_end }}
+                    </p>
 
-<div class="card">
-  <div><strong>{{ student.name }}</strong></div>
+                    <hr>
 
-  <div class="small-text">
-    Week: <strong>{{ week.week_start }}</strong> to <strong>{{ week.week_end }}</strong>
-  </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="text-muted small">Estimated Workload</p>
+                            <p class="h4">{{ "%.1f"|format(week.weekly_load) }} units</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="text-muted small">Safety Threshold</p>
+                            <p class="h4">{{ "%.1f"|format(week.threshold) }} units</p>
+                        </div>
+                    </div>
 
-  <div style="margin-top:8px;">
-    Weekly Load:
-    <strong>{{ "%.1f"|format(week.weekly_load) }}</strong>
-    (Threshold: {{ "%.1f"|format(week.threshold) }})
-  </div>
+                    <hr>
 
-  {% if week.exceeded %}
-    <div class="warning-box" style="margin-top:12px;">
-      Your estimated workload exceeds the threshold.
-      Consider rescheduling tasks or contacting a Wellbeing Officer.
+                    {% if week.exceeded %}
+                        <div class="alert alert-danger">
+                            <h5 class="alert-heading">⚠️ Workload Exceeded</h5>
+                            <p class="mb-0">Your estimated workload exceeds the recommended threshold. Consider rescheduling tasks or contacting a Wellbeing Officer for support.</p>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-success">
+                            <h5 class="alert-heading">✓ Workload Safe</h5>
+                            <p class="mb-0">You are within the safe workload range. Keep up the good pace!</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a href="{{ url_for('main.student_dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+            </div>
+        </div>
     </div>
-  {% else %}
-    <div class="success-box" style="margin-top:12px;">
-      You are within the safe workload range.
-    </div>
-  {% endif %}
-
 </div>
-
 {% endblock %}
+

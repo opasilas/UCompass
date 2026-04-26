@@ -2,29 +2,33 @@
     {
         "id": 1,
         "title": "Mindfulness Guide",
-        "category": "Mental Health",
+        "category": "Wellbeing",
         "content": "A guide to mindfulness exercises: https://example.com/mindfulness",
-        "created_by": "officer@example.com"
+        "created_by": "officer@example.com",
+        "pinned": false
     },
     {
         "id": 2,
         "title": "Study Skills Handbook",
-        "category": "Academic Support",
+        "category": "Academic",
         "content": "Tips for effective studying: https://example.com/study-skills",
-        "created_by": "teacher@example.com"
+        "created_by": "teacher@example.com",
+        "pinned": true
     },
     {
         "id": 3,
         "title": "Healthy Recipes for Students",
-        "category": "Physical Wellbeing",
+        "category": "Wellbeing",
         "content": "Quick and healthy meal ideas: https://example.com/recipes",
-        "created_by": "officer@example.com"
+        "created_by": "officer@example.com",
+        "pinned": false
     },
     {
         "id": 4,
         "title": "Algorithms cheat sheet",
         "category": "Academic",
         "content": "https://example.com/matj",
-        "created_by": "teacher@example.com"
+        "created_by": "teacher@example.com",
+        "pinned": false
     }
 ]
