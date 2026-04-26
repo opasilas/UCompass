@@ -1,12 +1,5 @@
 [
     {
-        "id": 1,
-        "title": "Module 1 Assignment",
-        "module": "CS101",
-        "deadline": "2026-05-02",
-        "created_by": "teacher@example.com"
-    },
-    {
         "id": 2,
         "title": "Midterm Exam",
         "module": "MATH201",
