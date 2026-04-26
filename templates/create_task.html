@@ -3,28 +3,38 @@
 {% block title %}Create Task{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Create New Task</h1>
-    <form action="{{ url_for('main.create_task') }}" method="post">
-        <div class="form-group">
-            <label for="title">Title</label>
-            <input type="text" id="title" name="title" value="{{ title if title is defined else '' }}" required>
-        </div>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1>Create New Task</h1>
+            
+            <div class="card">
+                <div class="card-body">
+                    <form action="{{ url_for('main.create_task') }}" method="post">
+                        <div class="form-group">
+                            <label for="title" class="form-label">Task Title</label>
+                            <input type="text" class="form-control" id="title" name="title" placeholder="Enter task title" value="{{ title if title is defined else '' }}" required>
+                        </div>
 
-        <div class="form-group">
-            <label for="description">Description</label>
-            <textarea id="description" name="description" rows="4">{{ description if description is defined else '' }}</textarea>
-        </div>
+                        <div class="form-group">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="4" placeholder="Describe the task">{{ description if description is defined else '' }}</textarea>
+                        </div>
 
-        <div class="form-group">
-            <label for="deadline">Deadline</label>
-            <input type="date" id="deadline" name="deadline" value="{{ deadline if deadline else '' }}">
-        </div>
+                        <div class="form-group">
+                            <label for="deadline" class="form-label">Deadline</label>
+                            <input type="date" class="form-control" id="deadline" name="deadline" value="{{ deadline if deadline else '' }}">
+                        </div>
 
-        <div class="actions">
-            <button type="submit">Create Task</button>
-            <a class="link" href="{{ url_for('main.student_dashboard') }}">Cancel</a>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Create Task</button>
+                            <a href="{{ url_for('main.student_dashboard') }}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-    </form>
+    </div>
 </div>
 {% endblock %}
+

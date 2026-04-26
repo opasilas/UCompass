@@ -3,28 +3,83 @@
 {% block title %}Update Task: {{ task.title }}{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Update Task: "{{ task.title }}"</h1>
-    <p>Student: {{ task.student_email }}</p>
-    <p>Current Deadline: {{ task.deadline if task.deadline else 'Not set' }}</p>
-    <p>Current Logged Effort: {{ task.logged_effort }} hours</p>
-    <p>Current Notes:</p>
-    <pre>{{ task.notes if task.notes else 'No notes yet.' }}</pre>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1>Update Task</h1>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>{{ task.title }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <p><strong>Student:</strong> {{ task.student_email }}</p>
+                            <p><strong>Deadline:</strong> {{ task.deadline if task.deadline else 'Not set' }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Logged Effort:</strong> {{ task.logged_effort }} hours</p>
+                            <p><strong>Status:</strong> Active</p>
+                        </div>
+                    </div>
 
-    <form action="{{ url_for('main.update_task', task_id=task.id) }}" method="post">
-        <h2>Log Effort</h2>
-        <div class="form-group">
-            <label for="effort_logged">Hours to Add:</label>
-            <input type="number" id="effort_logged" name="effort_logged" step="0.1" min="0">
-        </div>
+                    {% if task.notes %}
+                        <div class="card mb-4">
+                            <div class="card-header">Notes</div>
+                            <div class="card-body">
+                                <p>{{ task.notes }}</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
 
-        <h2>Add Note</h2>
-        <div class="form-group">
-            <label for="notes_added">Add a new note:</label>
-            <textarea id="notes_added" name="notes_added" rows="4"></textarea>
+            <!-- Edit Form -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>Edit Task</h3>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('main.update_task', task_id=task.id) }}" method="post">
+                        <div class="form-group">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="title" name="title" value="{{ task.title }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3">{{ task.description }}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="deadline" class="form-label">Deadline</label>
+                            <input type="date" class="form-control" id="deadline" name="deadline" value="{{ task.deadline }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="effort_logged" class="form-label">Log Additional Effort (hours)</label>
+                            <input type="number" class="form-control" id="effort_logged" name="effort_logged" step="0.1" min="0" placeholder="0.0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="notes_added" class="form-label">Add a Note</label>
+                            <textarea class="form-control" id="notes_added" name="notes_added" rows="3" placeholder="Add any notes or updates"></textarea>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Update Task</button>
+                            <a href="{{ url_for('main.student_dashboard') }}" class="btn btn-outline-secondary">Cancel</a>
+                            <form action="{{ url_for('main.delete_task', task_id=task.id) }}" method="post" onsubmit="return confirm('Are you sure you want to delete this task?');" class="ms-auto">
+                                <input type="hidden" name="next" value="{{ url_for('main.student_dashboard') }}">
+                                <button type="submit" class="btn btn-danger">Delete Task</button>
+                            </form>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <button type="submit">Update Task</button>
-    </form>
-    <p><a href="{{ url_for('main.student_dashboard') }}">Back to Dashboard</a></p>
+    </div>
 </div>
 {% endblock %}
+

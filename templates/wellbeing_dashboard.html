@@ -3,40 +3,112 @@
 {% block title %}Wellbeing Officer Dashboard{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Welcome, Wellbeing Officer!</h1>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Wellbeing Officer Dashboard</h1>
 
-    <h2>Manage Resources</h2>
-    <p><a href="{{ url_for('main.manage_resources') }}">View and Edit All Resources</a></p>
+            <div class="row">
+                <!-- Left: Resource creation and list (same as teacher) -->
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3 class="mb-0">Create New Resource</h3>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{ url_for('main.manage_resources') }}" method="post">
+                                <div class="row g-2">
+                                    <div class="col-md-6">
+                                        <input type="text" name="title" class="form-control" placeholder="Title" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select name="category" class="form-select">
+                                            <option value="Academic">Academic</option>
+                                            <option value="Wellbeing">Wellbeing</option>
+                                        </select>
+                                    </div>
+                                    <!-- Pinging moved to the resource list entries -->
+                                </div>
+                                <div class="form-group mt-2">
+                                    <textarea name="content" class="form-control" rows="3" placeholder="Content or link" required></textarea>
+                                </div>
+                                <div class="mt-2">
+                                    <button class="btn btn-primary" type="submit">Create Resource</button>
+                                    <a href="{{ url_for('main.manage_resources') }}" class="btn btn-outline-secondary ms-2">Manage All</a>
+                                </div>
+                            </form>
 
-    <h2>Overview of Student Tasks (for context)</h2>
-    {% if all_tasks %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Task ID</th>
-                    <th>Title</th>
-                    <th>Student Email</th>
-                    <th>Deadline</th>
-                    <th>Logged Effort</th>
-                    <th>Notes</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for task in all_tasks %}
-                <tr>
-                    <td>{{ task.id }}</td>
-                    <td>{{ task.title }}</td>
-                    <td>{{ task.student_email }}</td>
-                    <td>{{ task.deadline if task.deadline else 'N/A' }}</td>
-                    <td>{{ task.logged_effort }} hours</td>
-                    <td>{{ task.notes | truncate(50, True) if task.notes else 'No notes' }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No tasks available.</p>
-    {% endif %}
+                            <hr>
+
+                            <h5 class="mb-2">Your Resources</h5>
+                            {% set welfare_resources = all_resources | selectattr('created_by', 'equalto', session['user_email']) | list %}
+                            {% if welfare_resources %}
+                                <ul class="list-unstyled">
+                                    {% for r in welfare_resources %}
+                                        <li class="mb-3">
+                                            <strong>{{ r.title }}</strong>
+                                            <div class="text-muted small">{{ r.category }} • by {{ r.created_by }}</div>
+                                            <p class="mb-1">{{ r.content }}</p>
+                                            <div class="small text-muted">
+                                                <a href="{{ url_for('main.manage_resources') }}?resource_id={{ r.id }}" class="me-2">Edit</a>
+                                                <form method="post" action="{{ url_for('main.delete_resource', resource_id=r.id) }}" class="d-inline me-2" onsubmit="return confirm('Delete this resource?');">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                                </form>
+                                                <form method="post" action="{{ url_for('main.pin_resource', resource_id=r.id) }}" class="d-inline">
+                                                    <input type="hidden" name="next" value="{{ url_for('main.wellbeing_dashboard') }}">
+                                                    <button type="submit" class="btn btn-sm btn-outline-secondary">{% if r.pinned %}Unpin{% else %}Pin EC{% endif %}</button>
+                                                </form>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="text-muted">You haven't posted any resources yet.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Logged hours overview (replaces teacher deadline management) -->
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3 class="mb-0">Logged Hours Overview</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted">Weekly logged effort totals for students (last 4 weeks)</p>
+                            {% if students %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Student</th>
+                                                {% for ws in week_starts %}
+                                                    <th>Week starting {{ ws.strftime('%Y-%m-%d') }}</th>
+                                                {% endfor %}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for s in students %}
+                                                <tr>
+                                                    <td>{{ s.name }} <div class="text-muted small">{{ s.email }}</div></td>
+                                                    {% for ws in week_starts %}
+                                                        <td>{{ weekly_hours_by_student.get(s.email, {}).get(ws.isoformat(), 0.0) }}</td>
+                                                    {% endfor %}
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <p class="text-muted">No students found.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
+

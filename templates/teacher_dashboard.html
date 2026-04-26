@@ -3,38 +3,124 @@
 {% block title %}Teacher Dashboard{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Welcome, Teacher!</h1>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Teacher Dashboard</h1>
 
-    <h2>Manage Resources</h2>
-    <p><a href="{{ url_for('main.manage_resources') }}">View and Edit All Resources</a></p>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3 class="mb-0">Create New Resource</h3>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{ url_for('main.manage_resources') }}" method="post">
+                                <div class="row g-2">
+                                    <div class="col-md-6">
+                                        <input type="text" name="title" class="form-control" placeholder="Title" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select name="category" class="form-select">
+                                            <option value="Academic">Academic</option>
+                                            <option value="Wellbeing">Wellbeing</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button class="btn btn-primary w-100" type="submit">Create New Resource</button>
+                                    </div>
+                                </div>
+                                <div class="form-group mt-2">
+                                    <textarea name="content" class="form-control" rows="3" placeholder="Content or link" required></textarea>
+                                </div>
+                            </form>
 
-    <h2>Manage Student Tasks and Deadlines</h2>
-    {% if all_tasks %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Task ID</th>
-                    <th>Title</th>
-                    <th>Student Email</th>
-                    <th>Current Deadline</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for task in all_tasks %}
-                <tr>
-                    <td>{{ task.id }}</td>
-                    <td>{{ task.title }}</td>
-                    <td>{{ task.student_email }}</td>
-                    <td>{{ task.deadline if task.deadline else 'No Deadline Set' }}</td>
-                    <td><a href="{{ url_for('main.add_deadline', task_id=task.id) }}">Set/Update Deadline</a></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No tasks available to manage.</p>
-    {% endif %}
+                            <hr>
+
+                            <h5 class="mb-2">Your Resources</h5>
+                            {% if teacher_resources %}
+                                <ul class="list-unstyled">
+                                    {% for r in teacher_resources %}
+                                        <li class="mb-3">
+                                            <strong>{{ r.title }}</strong>
+                                            <div class="text-muted small">{{ r.category }} • by {{ r.created_by }}</div>
+                                            <p class="mb-1">{{ r.content }}</p>
+                                            <div class="small text-muted">
+                                                <a href="{{ url_for('main.manage_resources') }}?resource_id={{ r.id }}" class="me-2">Edit</a>
+                                                <form method="post" action="{{ url_for('main.delete_resource', resource_id=r.id) }}" class="d-inline" onsubmit="return confirm('Delete this resource?');">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                                </form>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="text-muted">You haven't posted any resources yet.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3 class="mb-0">Deadline Management</h3>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{ url_for('main.create_teacher_deadline') }}" method="post" class="row g-2 mb-3">
+                                <div class="col-12 col-md-5">
+                                    <input name="title" class="form-control" placeholder="Deadline title" required>
+                                </div>
+                                <div class="col-12 col-md-3">
+                                    <input name="module" class="form-control" placeholder="Module (optional)">
+                                </div>
+                                <div class="col-12 col-md-2">
+                                    <input name="deadline" type="date" class="form-control" required>
+                                </div>
+                                <div class="col-12 col-md-2">
+                                    <button class="btn btn-success w-100" type="submit">Post Deadline</button>
+                                </div>
+                            </form>
+
+                            {% if posted_deadlines %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Title</th>
+                                                <th>Module</th>
+                                                <th>Deadline</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for d in posted_deadlines %}
+                                            <tr>
+                                                <td><small class="text-muted">#{{ d.id }}</small></td>
+                                                <td>{{ d.title }}</td>
+                                                <td>{{ d.module or '—' }}</td>
+                                                <td>{{ d.deadline }}</td>
+                                                <td>
+                                                    <a href="{{ url_for('main.edit_teacher_deadline', deadline_id=d.id) }}" class="btn btn-sm btn-primary me-1">Edit</a>
+                                                    <form method="post" action="{{ url_for('main.delete_teacher_deadline', deadline_id=d.id) }}" class="d-inline" onsubmit="return confirm('Delete this posted deadline?');">
+                                                        <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <p class="text-muted">No posted deadlines.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
+

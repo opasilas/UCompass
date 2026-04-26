@@ -25,6 +25,7 @@ def create_app():
     app.users_data = []
     app.resources_data = []
     app.tasks_data = []
+    app.teacher_deadlines_data = []
 
     from routes import main_bp
     app.register_blueprint(main_bp)
@@ -38,6 +39,8 @@ def create_app():
             app.resources_data = load_data('resources.json')
         if not app.tasks_data:
             app.tasks_data = load_data('tasks.json')
+        if not getattr(app, 'teacher_deadlines_data', None):
+            app.teacher_deadlines_data = load_data('teacher_deadlines.json')
 
     return app
 
@@ -49,12 +52,12 @@ if __name__ == '__main__':
         os.makedirs('data')
     
     # Initialize empty JSON files if they don't exist
-    for filename in ['users.json', 'resources.json', 'tasks.json']:
+    for filename in ['users.json', 'resources.json', 'tasks.json', 'teacher_deadlines.json']:
         filepath = os.path.join('data', filename)
         if not os.path.exists(filepath):
             with open(filepath, 'w') as f:
                 json.dump([], f) # Start with an empty list
 
-    with app.app_context():
-        print(app.url_map)
+    # with app.app_context():
+    #     print(app.url_map)
     app.run(debug=True, port=8000)

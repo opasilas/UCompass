@@ -3,17 +3,32 @@
 {% block title %}Set Deadline for Task{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Set/Update Deadline for Task: "{{ task.title }}"</h1>
-    <p>Assigned to: {{ task.student_email }}</p>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1>Set Deadline</h1>
 
-    <form action="{{ url_for('main.add_deadline', task_id=task.id) }}" method="post">
-        <div class="form-group">
-            <label for="deadline">Deadline Date:</label>
-            <input type="date" id="deadline" name="deadline" value="{{ task.deadline if task.deadline else '' }}" required>
+            <div class="card">
+                <div class="card-header">
+                    <h4>{{ task.title }}</h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">Assigned to: <strong>{{ task.student_email }}</strong></p>
+
+                    <form action="{{ url_for('main.add_deadline', task_id=task.id) }}" method="post">
+                        <div class="form-group">
+                            <label for="deadline" class="form-label">Deadline Date</label>
+                            <input type="date" class="form-control" id="deadline" name="deadline" value="{{ task.deadline if task.deadline else '' }}" required>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Set Deadline</button>
+                            <a href="{{ url_for('main.teacher_dashboard') }}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <button type="submit">Set Deadline</button>
-    </form>
-    <p><a href="{{ url_for('main.teacher_dashboard') }}">Back to Teacher Dashboard</a></p>
+    </div>
 </div>
 {% endblock %}
