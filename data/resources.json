@@ -5,7 +5,9 @@
         "category": "Wellbeing",
         "content": "A guide to mindfulness exercises: https://example.com/mindfulness",
         "created_by": "officer@example.com",
-        "pinned": false
+        "pinned": true,
+        "pinned_by_role": "wellbeing_officer",
+        "pinned_by": "officer@example.com"
     },
     {
         "id": 2,
@@ -21,7 +23,9 @@
         "category": "Wellbeing",
         "content": "Quick and healthy meal ideas: https://example.com/recipes",
         "created_by": "officer@example.com",
-        "pinned": false
+        "pinned": true,
+        "pinned_by_role": "wellbeing_officer",
+        "pinned_by": "officer@example.com"
     },
     {
         "id": 4,

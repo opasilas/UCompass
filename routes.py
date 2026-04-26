@@ -17,20 +17,25 @@ class DashboardController:
         """Sequence Diagram S7: logic for determining busy weeks."""
         weekly_counts = {}
         student_tasks = [t for t in self.tasks if t.get('student_email') == student_email]
-        
+        today_date = datetime.now().date()
+
         for task in student_tasks:
             # Skip tasks without a valid deadline string
             deadline_val = task.get('deadline')
             if not deadline_val or not isinstance(deadline_val, str):
                 continue
             try:
-                date_obj = datetime.strptime(deadline_val, '%Y-%m-%d')
+                date_obj = datetime.strptime(deadline_val, '%Y-%m-%d').date()
             except (ValueError, TypeError):
                 # ignore malformed or non-string deadline values
                 continue
-            # Use (year, week) tuple as key to avoid collisions across years
-            iso = date_obj.isocalendar()
-            key = (iso[0], iso[1])
+            # Ignore deadlines that have already passed
+            if date_obj < today_date:
+                continue
+            # Use week starting on Sunday as the canonical week key
+            days_since_sunday = (date_obj.weekday() + 1) % 7  # Mon=0 -> 1, Sun=6 -> 0
+            week_start = date_obj - timedelta(days=days_since_sunday)
+            key = week_start
             weekly_counts[key] = weekly_counts.get(key, 0) + 1
         return weekly_counts
 
@@ -60,10 +65,21 @@ class DashboardController:
 
     def get_priority_resources(self, is_busy_week: bool):
         """Sequence Diagram S8: Fetches 'EC' support if busy, or generic if not."""
+        # If caller wants priority resources (e.g., during a busy week), return wellbeing resources that have been pinned
         if is_busy_week:
-            # Filter for Wellbeing/Emergency categories
-            return [r for r in self.resources if r.get('category') == 'Wellbeing']
-        return self.resources
+            return [r for r in self.resources if r.get('pinned') and (r.get('category') == 'Wellbeing')]
+        return list(self.resources)
+
+    def fetch_all_resources(self) -> list:
+        """Return all known resources (shallow copy)."""
+        return list(self.resources)
+
+    def check_threshold(self, count: int) -> bool:
+        """Return True if the provided count meets or exceeds the controller threshold."""
+        try:
+            return int(count) >= self.threshold
+        except (TypeError, ValueError):
+            return False
 
 @main_bp.route('/')
 def index():
@@ -146,23 +162,42 @@ def student_dashboard():
     # Get countdown reminders
     deadline_reminders = controller.get_deadline_reminders(email)
 
-    # Weekly load using controller (keys from controller may be week identifiers)
+    # Weekly load using controller (keys are ISO week tuples: (year, week_number))
     weekly_load = controller.calculate_weekly_load(email)
 
-    # Use controller.threshold and >= as requested
-    is_busy_week = any(count >= controller.threshold for count in weekly_load.values())
+    # Precompute set of ISO week keys that are considered 'busy' (>= controller.threshold)
+    busy_week_keys = {k for k, v in weekly_load.items() if controller.check_threshold(v)}
 
-    # Toggle for fetching priority resources (legacy param)
-    toggle_on = request.args.get('busy_toggle') == 'on'
-    display_resources = controller.get_priority_resources(is_busy_week and toggle_on)
+    # Determine if there are any busy weeks
+    is_busy_week = bool(busy_week_keys)
+
+    # Determine current week-start (Sunday) key and whether it's busy
+    today_for_current = datetime.now().date()
+    days_since_sunday_now = (today_for_current.weekday() + 1) % 7
+    current_week_key = today_for_current - timedelta(days=days_since_sunday_now)
+    is_current_week_busy = current_week_key in busy_week_keys
 
     # Persist show_busiest_week_alert in session so it survives month navigation
     arg_values = request.args.getlist('show_busiest_week_alert')
     if arg_values:
-        # If any value is 'true', consider it enabled (handles both hidden+checkbox inputs)
         session['show_busiest_week_alert'] = 'true' if 'true' in arg_values else 'false'
     # Final value used to drive calendar highlighting
     show_busiest_in_session = session.get('show_busiest_week_alert', 'false') == 'true'
+
+    # Toggle for fetching priority resources (legacy param). When enabled, use current-week busy status.
+    toggle_on = request.args.get('busy_toggle') == 'on'
+    # Use controller helpers for resource access rather than reading current_app directly
+    display_resources = controller.get_priority_resources(is_current_week_busy and show_busiest_in_session)
+
+    # Recommended resources to show when busy-week highlighting is enabled and a busy week exists
+    if show_busiest_in_session and is_current_week_busy:
+        recommended_resources = [r for r in controller.fetch_all_resources() if r.get('pinned') and r.get('category') == 'Wellbeing']
+    else:
+        recommended_resources = []
+
+    # Flash a RED ALERT only when the user has enabled the toggle and a busy week exists
+    if show_busiest_in_session and is_busy_week:
+        flash('RED ALERT! You have more than 5 deadlines in a single week. Consider reducing workload!', 'danger')
 
     # Student tasks for calendar and lists (sorted by deadline, earliest first; tasks without deadline last)
     def _parse_deadline_or_max(task):
@@ -181,29 +216,31 @@ def student_dashboard():
         t['editable'] = not bool(t.get('teacher_generated'))
     student_tasks = sorted(student_tasks, key=_parse_deadline_or_max)
 
-    # Resource category filter (All / Academic / Wellbeing)
+    # Resource category filter (All / Academic / Wellbeing) using controller-provided resources
     resource_category = request.args.get('resource_category', 'all')
+    all_resources = controller.fetch_all_resources()
     if resource_category and resource_category.lower() != 'all':
-        filtered_resources = [r for r in current_app.resources_data if (r.get('category') or '').lower() == resource_category.lower()]
+        filtered_resources = [r for r in all_resources if (r.get('category') or '').lower() == resource_category.lower()]
     else:
-        filtered_resources = list(current_app.resources_data)
+        filtered_resources = list(all_resources)
     # Pinned resources should always be computed from the full dataset and not affected by category filters
-    pinned_resources = [r for r in current_app.resources_data if r.get('pinned')]
+    pinned_resources = [r for r in all_resources if r.get('pinned')]
 
-    # Busiest-week alert (use >= controller.threshold as requested)
-    busiest_week_alert = any(count >= controller.threshold for count in weekly_load.values())
+    # Busiest-week alert (true when any week meets/exceeds threshold)
+    busiest_week_alert = is_busy_week
 
     # Calendar View Data Generation
     today = datetime.now().date()
-    current_week_start = today - timedelta(days=today.weekday())
+    # Week starts on Sunday for calendar display
+    days_since_sunday = (today.weekday() + 1) % 7
+    current_week_start = today - timedelta(days=days_since_sunday)
     calendar_weeks = []
     for i in range(-2, 3):
         week_start = current_week_start + timedelta(weeks=i)
         week_end = week_start + timedelta(days=6)
 
         # Determine week identifier and use controller's weekly load (preserve existing logic)
-        iso = week_start.isocalendar()
-        week_key = (iso[0], iso[1])
+        week_key = week_start
         week_count = weekly_load.get(week_key, 0)
 
         # Build per-day data for display only (days show tasks but busy state stays at week level)
@@ -215,14 +252,15 @@ def student_dashboard():
                 if task.get('deadline') and datetime.strptime(task['deadline'], '%Y-%m-%d').date() == day_date
             ]
             days.append({
-                'date': day_date.isoformat(),
+                'date': day_date,
                 'has_tasks': len(tasks_on_day) > 0,
                 'tasks': tasks_on_day,
-                'deadlines_count': len(tasks_on_day)
+                'deadlines_count': len(tasks_on_day),
+                'is_past': day_date < today
             })
 
-        # Keep busy logic at week level using controller.threshold; highlight when >= threshold
-        is_week_busy = week_count >= controller.threshold
+        # Keep busy logic at week level using the precomputed busy_week_keys
+        is_week_busy = week_key in busy_week_keys
 
         week_info = {
             'start_date': week_start.isoformat(),
@@ -269,23 +307,22 @@ def student_dashboard():
                 task for task in student_tasks
                 if task.get('deadline') and datetime.strptime(task['deadline'], '%Y-%m-%d').date() == day_date
             ]
-            # ISO week tuple for week-level busy check
-            iso = day_date.isocalendar()
-            iso_week_key = (iso[0], iso[1])
+            # Week-start (Sunday) key for this day
+            days_since_sunday_for_day = (day_date.weekday() + 1) % 7
+            iso_week_key = (day_date - timedelta(days=days_since_sunday_for_day))
             week_days.append({
                 'date': day_date,
                 'in_month': day_date.month == first_of_month.month,
                 'tasks': tasks_on_day,
                 'deadlines_count': len(tasks_on_day),
+                'is_past': day_date < today,
                 'iso_week_key': iso_week_key
             })
 
-        # Determine canonical ISO week for this row (use the middle day) so the row maps
-        # to a single ISO week and doesn't inherit the same ISO-week from adjacent rows.
-        mid_day = cursor + timedelta(days=3)
-        mid_iso = mid_day.isocalendar()
-        mid_week_key = (mid_iso[0], mid_iso[1])
-        week_busy = weekly_load.get(mid_week_key, 0) >= controller.threshold
+        # Determine canonical week-start (use the row's week_start cursor) so the row maps
+        # to a single Sunday-start week and doesn't inherit the same week from adjacent rows.
+        week_start_for_row = cursor
+        week_busy = week_start_for_row in busy_week_keys
 
         calendar_month['weeks'].append({
             'days': week_days,
@@ -335,7 +372,10 @@ def student_dashboard():
                            prev_year=prev_year,
                            next_month=next_month,
                            next_year=next_year,
-                           deadline_reminders=deadline_reminders)
+                           deadline_reminders=deadline_reminders,
+                           recommended_resources=recommended_resources,
+                           is_current_week_busy=is_current_week_busy,
+                           busy_week_keys=busy_week_keys)
 
 
 @main_bp.route('/day/<date>')
@@ -376,7 +416,8 @@ def teacher_dashboard():
     
     # Teacher-specific resources (those created by this user)
     teacher_email = session.get('user_email')
-    teacher_resources = [r for r in current_app.resources_data if r.get('created_by') == teacher_email]
+    controller = DashboardController(current_app.tasks_data, current_app.resources_data)
+    teacher_resources = [r for r in controller.fetch_all_resources() if r.get('created_by') == teacher_email]
 
     # All posted deadlines created by teachers (central list)
     posted_deadlines = getattr(current_app, 'teacher_deadlines_data', []) or []
@@ -394,9 +435,47 @@ def wellbeing_dashboard():
         return redirect(url_for('main.login'))
     
     # This dashboard will initially be similar to teacher_dashboard for resource management
+    # Prepare weekly logged hours per student for the last 4 weeks (week starts Sunday)
+    today = datetime.now().date()
+    days_since_sunday = (today.weekday() + 1) % 7
+    current_week_start = today - timedelta(days=days_since_sunday)
+    week_starts = [current_week_start - timedelta(weeks=i) for i in range(3, -1, -1)]  # oldest -> newest
+
+    # collect students
+    students = [u for u in current_app.users_data if u.get('role') == 'student']
+
+    # build map student_email -> {week_start.isoformat(): total_hours}
+    weekly_hours_by_student = {}
+    for s in students:
+        email = s.get('email')
+        weekly_hours_by_student[email] = {ws.isoformat(): 0.0 for ws in week_starts}
+
+    for t in current_app.tasks_data:
+        student_email = t.get('student_email')
+        if not student_email:
+            continue
+        deadline_val = t.get('deadline')
+        if not deadline_val:
+            continue
+        try:
+            d = datetime.strptime(deadline_val, '%Y-%m-%d').date()
+        except Exception:
+            continue
+        # determine week-start (Sunday) for this deadline
+        d_days_since_sunday = (d.weekday() + 1) % 7
+        ws = (d - timedelta(days=d_days_since_sunday))
+        if ws in week_starts:
+            weekly_hours_by_student.setdefault(student_email, {ws.isoformat(): 0.0 for ws in week_starts})
+            weekly_hours_by_student[student_email][ws.isoformat()] = weekly_hours_by_student[student_email].get(ws.isoformat(), 0.0) + float(t.get('logged_effort', 0.0))
+
+    # Use controller for resource access consistency
+    controller = DashboardController(current_app.tasks_data, current_app.resources_data)
     return render_template('wellbeing_dashboard.html', 
-                            all_resources=current_app.resources_data,
-                            all_tasks=current_app.tasks_data) # For Feature Two (adding deadlines)
+                            all_resources=controller.fetch_all_resources(),
+                            all_tasks=current_app.tasks_data,
+                            week_starts=week_starts,
+                            students=students,
+                            weekly_hours_by_student=weekly_hours_by_student)
 
 
 @main_bp.route('/resources')
@@ -405,9 +484,11 @@ def resources_page():
         flash('Please log in to view resources.', 'danger')
         return redirect(url_for('main.login'))
 
-    # Show pinned and all resources to logged-in users
-    pinned = [r for r in current_app.resources_data if r.get('pinned')]
-    others = [r for r in current_app.resources_data if not r.get('pinned')]
+    # Show pinned and all resources to logged-in users (use controller for read access)
+    controller = DashboardController(current_app.tasks_data, current_app.resources_data)
+    all_resources = controller.fetch_all_resources()
+    pinned = [r for r in all_resources if r.get('pinned')]
+    others = [r for r in all_resources if not r.get('pinned')]
     return render_template('resources.html', pinned_resources=pinned, all_resources=others)
 
 # Placeholder for Feature Two: Add/Edit Resources
@@ -428,6 +509,7 @@ def manage_resources():
         title = request.form['title']
         category = request.form.get('category')
         content = request.form['content']
+        pinned_flag = request.form.get('pinned') == 'on'
         
         if resource_id: # Update existing
             for i, res in enumerate(current_app.resources_data):
@@ -435,6 +517,14 @@ def manage_resources():
                     current_app.resources_data[i]['title'] = title
                     current_app.resources_data[i]['category'] = category
                     current_app.resources_data[i]['content'] = content
+                    # update pinned state when provided; record who pinned/unpinned
+                    current_app.resources_data[i]['pinned'] = pinned_flag
+                    if pinned_flag:
+                        current_app.resources_data[i]['pinned_by_role'] = session.get('user_role')
+                        current_app.resources_data[i]['pinned_by'] = session.get('user_email')
+                    else:
+                        current_app.resources_data[i].pop('pinned_by_role', None)
+                        current_app.resources_data[i].pop('pinned_by', None)
                     break
             flash('Resource updated successfully!', 'success')
         else: # Add new
@@ -452,7 +542,10 @@ def manage_resources():
                 'title': title,
                 'category': category,
                 'content': content,
-                'created_by': session['user_email'] # Track who created it
+                'created_by': session['user_email'], # Track who created it
+                'pinned': pinned_flag,
+                'pinned_by_role': session.get('user_role') if pinned_flag else None,
+                'pinned_by': session.get('user_email') if pinned_flag else None
             }
             current_app.resources_data.append(new_resource)
             flash('Resource added successfully!', 'success')
@@ -700,9 +793,18 @@ def pin_resource(resource_id):
     # Toggle pinned flag on resource
     for res in current_app.resources_data:
         if res.get('id') == resource_id:
-            res['pinned'] = not res.get('pinned', False)
+            new_state = not res.get('pinned', False)
+            res['pinned'] = new_state
+            if new_state:
+                # record who pinned it
+                res['pinned_by_role'] = session.get('user_role')
+                res['pinned_by'] = session.get('user_email')
+            else:
+                res.pop('pinned_by_role', None)
+                res.pop('pinned_by', None)
             save_data('resources.json', current_app.resources_data)
             break
 
-    # Return back to dashboard
-    return redirect(url_for('main.student_dashboard'))
+    # Return back to 'next' if provided, else referrer, else student dashboard
+    next_url = request.form.get('next') or request.referrer or url_for('main.student_dashboard')
+    return redirect(next_url)

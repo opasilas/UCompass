@@ -6,7 +6,8 @@
         "student_email": "student@example.com",
         "deadline": "2026-04-29",
         "logged_effort": 7.0,
-        "notes": "Started on feature one.\\n[2026-02-28 10:30] Researching flat file storage."
+        "notes": "Started on feature one.\\n[2026-02-28 10:30] Researching flat file storage.",
+        "editable": true
     },
     {
         "id": 102,
@@ -15,7 +16,8 @@
         "student_email": "student@example.com",
         "deadline": "2026-03-05",
         "logged_effort": 4.0,
-        "notes": "Completed problem 1.\n[2026-04-25 09:34] almost done"
+        "notes": "Completed problem 1.\n[2026-04-25 09:34] almost done",
+        "editable": true
     },
     {
         "id": 103,
@@ -24,7 +26,8 @@
         "student_email": "student@example.com",
         "deadline": "2026-03-07",
         "logged_effort": 11.0,
-        "notes": "Chose topic.\n[2026-04-25 17:30] New note test"
+        "notes": "Chose topic.\n[2026-04-25 17:30] New note test",
+        "editable": true
     },
     {
         "id": 104,
@@ -33,7 +36,8 @@
         "student_email": "student@example.com",
         "deadline": "2026-03-12",
         "logged_effort": 3.2,
-        "notes": "\n[2026-03-22 18:20] defies\n[2026-03-22 18:21] hi this is a test"
+        "notes": "\n[2026-03-22 18:20] defies\n[2026-03-22 18:21] hi this is a test",
+        "editable": true
     },
     {
         "id": 105,
@@ -42,16 +46,8 @@
         "student_email": "student@example.com",
         "deadline": "2026-03-08",
         "logged_effort": 1.0,
-        "notes": "Reviewed Chapter 1."
-    },
-    {
-        "id": 106,
-        "title": "test task",
-        "description": "hi, test",
-        "deadline": "2026-03-27",
-        "student_email": "student@example.com",
-        "logged_effort": 0.0,
-        "notes": ""
+        "notes": "Reviewed Chapter 1.",
+        "editable": true
     },
     {
         "id": 112,
@@ -60,7 +56,8 @@
         "deadline": "2026-04-08",
         "student_email": "student@example.com",
         "logged_effort": 0.0,
-        "notes": ""
+        "notes": "",
+        "editable": true
     },
     {
         "id": 114,
@@ -69,7 +66,8 @@
         "deadline": "2026-04-26",
         "student_email": "student@example.com",
         "logged_effort": 0.0,
-        "notes": ""
+        "notes": "",
+        "editable": true
     },
     {
         "id": 115,
@@ -78,7 +76,8 @@
         "deadline": "2026-04-19",
         "student_email": "student@example.com",
         "logged_effort": 0.0,
-        "notes": ""
+        "notes": "",
+        "editable": true
     },
     {
         "id": 116,
@@ -87,7 +86,8 @@
         "deadline": "2026-04-29",
         "student_email": "student@example.com",
         "logged_effort": 0.0,
-        "notes": ""
+        "notes": "",
+        "editable": true
     },
     {
         "id": 117,
@@ -96,6 +96,57 @@
         "deadline": "2026-03-12",
         "student_email": "student@example.com",
         "logged_effort": 0.0,
-        "notes": ""
+        "notes": "",
+        "editable": true
+    },
+    {
+        "id": 119,
+        "title": "fwqsmlq",
+        "description": "fewqpmfew",
+        "deadline": "2026-03-11",
+        "student_email": "student@example.com",
+        "logged_effort": 0.0,
+        "notes": "",
+        "editable": true
+    },
+    {
+        "id": 120,
+        "title": "fesqk",
+        "description": "rewire",
+        "deadline": "2026-03-13",
+        "student_email": "student@example.com",
+        "logged_effort": 0.0,
+        "notes": "",
+        "editable": true
+    },
+    {
+        "id": 123,
+        "title": "dasfds",
+        "description": "fwdeqfe",
+        "deadline": "2026-05-12",
+        "student_email": "student@example.com",
+        "logged_effort": 0.0,
+        "notes": "",
+        "editable": true
+    },
+    {
+        "id": 124,
+        "title": "v hi",
+        "description": "gi",
+        "deadline": "2026-05-13",
+        "student_email": "student@example.com",
+        "logged_effort": 0.0,
+        "notes": "",
+        "editable": true
+    },
+    {
+        "id": 126,
+        "title": "chi",
+        "description": "g hk",
+        "deadline": "2026-05-10",
+        "student_email": "student@example.com",
+        "logged_effort": 0.0,
+        "notes": "",
+        "editable": true
     }
 ]

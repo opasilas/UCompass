@@ -407,6 +407,16 @@ textarea.form-control {
     color: var(--text-muted);
 }
 
+.month-day.past-day {
+    background-color: #f8f9fa;
+    color: #6c757d;
+}
+
+.month-day.past-day .day-number a {
+    color: #6c757d;
+    pointer-events: none;
+}
+
 .month-day.busy-week-day {
     background-color: #fee2e2;
     color: #7f1d1d;

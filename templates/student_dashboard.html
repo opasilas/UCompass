@@ -60,12 +60,7 @@
                 {% endif %}
             </div>
 
-            <!-- Busiest Week Alert -->
-            {% if busiest_week_alert %}
-                <div class="alert alert-danger">
-                    <strong>RED ALERT!</strong> You have more than 5 deadlines in a single week. Consider reducing workload!
-                </div>
-            {% endif %}
+            <!-- busiest-week static alert removed; use flashed message when toggle is enabled -->
         </aside>
 
         <!-- Main Content -->
@@ -87,7 +82,7 @@
                         <input type="hidden" id="busiest_flag" name="show_busiest_week_alert" value="{{ 'true' if show_calendar_busy_highlight else 'false' }}">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="busiest_week_toggle" {% if show_calendar_busy_highlight %}checked{% endif %} onchange="document.getElementById('busiest_flag').value = this.checked ? 'true' : 'false'; this.form.submit();">
-                            <label class="form-check-label" for="busiest_week_toggle">Show Busiest Week Highlighting</label>
+                                <label class="form-check-label" for="busiest_week_toggle">Show Busy week</label>
                         </div>
                     </form>
 
@@ -119,7 +114,7 @@
                         <div class="month-grid">
                             {% for week in calendar_month.weeks %}
                                 {% for day in week.days %}
-                                    <div class="month-day {% if not day.in_month %}other-month{% endif %} {% if show_calendar_busy_highlight and week.is_busy %}busy-week-day{% endif %}">
+                                    <div class="month-day {% if not day.in_month %}other-month{% endif %} {% if show_calendar_busy_highlight and week.is_busy %}busy-week-day{% endif %} {% if day.is_past %}past-day{% endif %}">
                                         <div class="day-number">
                                             <a href="{{ url_for('main.day_view', date=day.date.isoformat()) }}">{{ day.date.day }}</a>
                                         </div>
@@ -154,7 +149,7 @@
                     <h3>Resources</h3>
                     <div class="resource-list">
                         {% set pinned = pinned_resources %}
-                        {% set others = all_resources %}
+                        {% set others = all_resources | selectattr('pinned', 'equalto', False) | list %}
 
                         {% if pinned %}
                             <h4>Pinned Resources</h4>
@@ -163,7 +158,13 @@
                                     <form method="post" action="{{ url_for('main.pin_resource', resource_id=r.id) }}" class="pin-form">
                                         <button type="submit" class="btn-pin" title="Unpin resource">📌</button>
                                     </form>
-                                    <h4 class="resource-title">{{ r.title }}</h4>
+                                    <h4 class="resource-title">{{ r.title }}
+                                        {% if r.pinned_by_role == 'wellbeing_officer' %}
+                                            <span class="badge bg-info ms-2">Pinned by Wellbeing Officer</span>
+                                        {% elif r.pinned_by_role == 'teacher' %}
+                                            <span class="badge bg-secondary ms-2">Pinned by Teacher</span>
+                                        {% endif %}
+                                    </h4>
                                     <div class="text-muted small">{{ r.category }}</div>
                                     <p class="resource-content">{{ r.content }}</p>
                                 </div>
