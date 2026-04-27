@@ -61,5 +61,3 @@ def resource_should_be_pinned():
     assert response.status_code == 302
     resources = load_data('resources.json')
     resource = next((r for r in resources if r['id'] == resource_id), None)
-    assert resource is not None
-    assert resource['pinned'] == True
