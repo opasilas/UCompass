@@ -51,6 +51,9 @@ def existing_task():
 @when(parsers.parse('I log "{hours}" hours of effort on my task'))
 def log_effort(hours):
     global response
+    with client.session_transaction() as session:
+        session['user_role'] = 'student'
+        session['user_email'] = 'student@ucompass.com'
     response = client.post(f'/update_task/{task_id}', data={
         "effort_logged": hours,
         "notes_added": ""
@@ -59,7 +62,7 @@ def log_effort(hours):
 @then(parsers.parse('the logged effort should be "{hours}"'))
 def check_logged_effort(hours):
     assert response.status_code == 302
-    tasks = load_data('tasks.json')
-    task = next((t for t in tasks if t['id'] == task_id), None)
-    assert task is not None
-    assert task['logged_effort'] == float(hours)
+    with app.app_context():
+        task = next((t for t in app.tasks_data if t['id'] == task_id), None)
+        assert task is not None
+        assert task['logged_effort'] == float(hours)

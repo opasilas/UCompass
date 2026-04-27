@@ -24,8 +24,6 @@ def initialise_app():
 
 @given(parsers.parse('I am logged in as a wellbeing officer with email "{email}"'))
 def logged_in_as_wellbeing(email):
-    global client
-    client = app.test_client()
     with client.session_transaction() as session:
         session['user_role'] = 'wellbeing_officer'
         session['user_email'] = email
@@ -33,12 +31,18 @@ def logged_in_as_wellbeing(email):
 @when(parsers.parse('I add a resource called "{title}" with category "{category}"'))
 def add_resource(title, category):
     global response
+    with client.session_transaction() as session:
+        session['user_role'] = 'wellbeing_officer'
+        session['user_email'] = 'officer@example.com'
     response = client.post('/manage_resources', data={
         "title": title,
         "category": category,
+        "content": ""
     })
 
 @then(parsers.parse('the resource "{title}" should exist in the system'))
 def resource_should_exist(title):
     resources = load_data('resources.json')
+    print("resources:", resources)
+    print("response status:", response.status_code)
     assert any(r["title"] == title for r in resources)
