@@ -13,14 +13,22 @@ response = None
 scenarios("../features/structured_planning.feature")
 
 
+def login_as_student():
+    with client.session_transaction() as sess:
+        sess["user_email"] = "student@example.com"
+        sess["user_role"] = "student"
+
+
 @when("I create 5 tasks in one week")
 def create_busy_week_tasks():
     global response
+    login_as_student()
+
     for i in range(5):
         response = client.post(
             "/create_task",
             data={
-                "title": f"Task {i+1}",
+                "title": f"Busy Week Task {i+1}",
                 "description": "Busy week task",
                 "deadline": f"2026-05-0{i+1}",
                 "student_email": "student@example.com"
@@ -31,6 +39,9 @@ def create_busy_week_tasks():
 
 @then("the dashboard should show a busy week")
 def check_busy_week():
+    login_as_student()
+
     dashboard_response = client.get("/student_dashboard", follow_redirects=True)
     assert dashboard_response.status_code == 200
-    assert b"busy" in dashboard_response.data.lower()
+
+    assert b"show busy week" in dashboard_response.data.lower()

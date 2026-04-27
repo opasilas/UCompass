@@ -6,6 +6,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")
 
 from app import create_app
 
+# User Story 5: Teacher persona test
+# Checks that a teacher can add academic deadlines and supporting resources.
+# Separate from User Story 2, which focuses on the wellbeing officer.
+
 app = create_app()
 client = app.test_client()
 response = None
