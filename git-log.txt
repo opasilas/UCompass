@@ -1,0 +1,378 @@
+commit c07b8adc47e992ce458659642160ec722215aa53
+Author: opasilas <opasilas1@gmail.com>
+Date:   Tue Apr 28 11:05:57 2026 +0100
+
+    updated readme, added gitlog file, keepalive for web server
+
+commit cfe3ceb053392539ae720c49396510d4d7fa0b7b
+Merge: 8f99a23 118d35a
+Author: Silas Opawoye <75432347+opasilas@users.noreply.github.com>
+Date:   Tue Apr 28 08:32:33 2026 +0100
+
+    Merge pull request #14 from opasilas/test-fixes
+    
+    Test fixes
+
+commit 118d35a3835e4ba0ad40e31315843e23b8ea93db
+Author: Saffron Forde <saffron.forde@outlook.com>
+Date:   Mon Apr 27 22:29:35 2026 +0100
+
+    Add/update test file
+
+commit b4514158eea5f57ae92e0d4628d3310c5c66e208
+Author: Saffron Forde <saffron.forde@outlook.com>
+Date:   Mon Apr 27 20:11:08 2026 +0100
+
+    Update test files
+
+commit 37f492a7302e6b007c4c0b4ccb01ea70ef5b001b
+Author: Saffron Forde <saffron.forde@outlook.com>
+Date:   Mon Apr 27 19:59:00 2026 +0100
+
+    Update test files
+
+commit 8f99a23f063e056f21c2ab0713f1d82a6990fa73
+Merge: 939a7d5 259f838
+Author: Silas Opawoye <75432347+opasilas@users.noreply.github.com>
+Date:   Mon Apr 27 09:59:04 2026 +0100
+
+    Merge pull request #13 from opasilas/test-fixes
+    
+    Update final test files
+
+commit 259f838f0fba10eac7fee4b3127d6442ce155e9e
+Author: Saffron Forde <saffron.forde@outlook.com>
+Date:   Mon Apr 27 08:47:39 2026 +0100
+
+    Update final test files
+
+commit 939a7d5590e26c752456672246675e9b0cea2e5b
+Merge: 3fcd331 b2921da
+Author: Silas Opawoye <75432347+opasilas@users.noreply.github.com>
+Date:   Mon Apr 27 01:50:09 2026 +0100
+
+    Merge pull request #11 from opasilas/my-calendar-branch
+    
+    My calendar branch
+
+commit b2921dae0088a0ceaf773d31334fb742ca5f4da8
+Merge: c74a7bd 3fcd331
+Author: opasilas <opasilas1@gmail.com>
+Date:   Mon Apr 27 01:15:20 2026 +0100
+
+    Merge branch 'main' into my-calendar-branch
+
+commit c74a7bdeba87372b053e914a8d519ac418fae5ee
+Author: Saffron Forde <saffron.forde@outlook.com>
+Date:   Sun Apr 26 21:36:23 2026 +0100
+
+    Add remaining test files and fix gitignore
+
+commit 3fcd3317a88d555a56b24fb66fb728e53dd21b56
+Author: Shante Kamutaundi <shaeilline@gmail.com>
+Date:   Sun Apr 26 18:37:53 2026 +0100
+
+    Finalised testing for user stories 5-8
+
+commit 3552ed7b60303d143d1ddd05d593bea67daf697c
+Author: Saffron Forde <saffron.forde@outlook.com>
+Date:   Sun Apr 26 18:10:39 2026 +0100
+
+    Add test step definitions and feature files
+
+commit 9e9fa88d7c7f90d6ef6af7cf05af597d905b5db8
+Author: Saffron Forde <saffron.forde@outlook.com>
+Date:   Sun Apr 26 18:00:54 2026 +0100
+
+    Add test files
+
+commit 8ca1fc3b80f4408ae2cb1cd23911f0d57891f7f3
+Merge: 59c206a 6865dfb
+Author: Hasan Al-Rashed <hasanal-rashed@hotmail.com>
+Date:   Sun Apr 26 16:28:03 2026 +0100
+
+    Merge pull request #10 from opasilas/feature/UC-006-v2
+    
+     remove .idea folder from tracking
+
+commit 6865dfb7795c0e5da29462cea256ca2a22ee82d2
+Author: hasanalrashed <hasanal-rashed@hotmail.com>
+Date:   Sun Apr 26 16:25:59 2026 +0100
+
+     remove .idea folder from tracking
+
+commit 59c206a7b245f3b95169e48c01de4ff9b593a7ec
+Merge: d666491 6b94f7b
+Author: Silas Opawoye <75432347+opasilas@users.noreply.github.com>
+Date:   Sun Apr 26 16:10:43 2026 +0100
+
+    Merge pull request #9 from opasilas/feature/UC-006-v2
+    
+    Add User Story 8, EC highlighted in busy week alert
+
+commit 6b94f7bc21ac2e4e715971b76ea4310954ff06fa
+Author: hasanalrashed <hasanal-rashed@hotmail.com>
+Date:   Sun Apr 26 15:59:56 2026 +0100
+
+    Add User Story 8, EC highlighted in busy week alert
+
+commit d6664915b8a5cd5b6d02b7a991749d05fc9a8fb8
+Merge: 32dc23c ea06f1c
+Author: Silas Opawoye <75432347+opasilas@users.noreply.github.com>
+Date:   Sun Apr 26 13:45:07 2026 +0100
+
+    Merge pull request #7 from opasilas/feature/UC-006
+    
+    Feature/UC-006: S1 - S9
+
+commit ea06f1cd43f1a11e5a37ae3091256012216a8dd3
+Author: opasilas <opasilas1@gmail.com>
+Date:   Sun Apr 26 13:26:33 2026 +0100
+
+    implemented resource pinning, officer dashboard
+
+commit 3237798d222adb5d87b65f5497a2c6283f7737c1
+Author: opasilas <opasilas1@gmail.com>
+Date:   Sun Apr 26 10:49:18 2026 +0100
+
+    redesigned ui, added resource pinning, added resource edit to teacher dash
+
+commit abd684367544554fdbeec376d818a3eb61cabc8a
+Author: opasilas <opasilas1@gmail.com>
+Date:   Sat Apr 25 20:53:12 2026 +0100
+
+    fixed calendar position, task update/delete
+
+commit 32dc23cfd4ad6c47e72ac6d1d67f570065d7d4f7
+Merge: 615102a 8cb2108
+Author: Reece Palmer <97815200+RPalmr@users.noreply.github.com>
+Date:   Sat Apr 25 23:19:57 2026 +0100
+
+    Merge pull request #6 from opasilas/show-resources
+    
+    show resources on student dashboard
+
+commit 615102a77782c6cbb147ef9dde48709d230f968e
+Merge: 4dc9287 adaad99
+Author: Silas Opawoye <75432347+opasilas@users.noreply.github.com>
+Date:   Sat Apr 25 02:38:28 2026 +0100
+
+    Merge pull request #5 from opasilas/my-calendar-branch
+    
+    My calendar branch
+
+commit adaad990021401f0afd7b3aa03b71d2c4980a95f
+Merge: 5c12e4a 4dc9287
+Author: Silas Opawoye <75432347+opasilas@users.noreply.github.com>
+Date:   Sat Apr 25 02:38:10 2026 +0100
+
+    Merge branch 'main' into my-calendar-branch
+
+commit 4dc9287cf20ad7b47366b5b7aa9e22569069c67a
+Merge: 264ac1f a371f43
+Author: Silas Opawoye <75432347+opasilas@users.noreply.github.com>
+Date:   Sat Apr 25 02:33:38 2026 +0100
+
+    Merge pull request #4 from opasilas/feature/UC-005
+    
+    Add story 6 feature, deadline countdown if its within 7 days
+
+commit a371f43d5ba9317b00c472210858e68f58f19f27
+Merge: 28887f7 264ac1f
+Author: Silas Opawoye <75432347+opasilas@users.noreply.github.com>
+Date:   Sat Apr 25 02:33:24 2026 +0100
+
+    Merge branch 'main' into feature/UC-005
+
+commit 8cb2108d07653b84ae7706fa6d5ac217ac2fa139
+Author: Reece Palmer <REECELPALMER@GMAIL.COM>
+Date:   Fri Apr 24 08:37:00 2026 +0100
+
+    show resources on student dashboard
+
+commit 264ac1f01bce70fbf90538f199f755bd7742f148
+Author: Shante Kamutaundi <shaeilline@gmail.com>
+Date:   Thu Apr 23 23:52:05 2026 +0100
+
+    Remove backup file
+
+commit c71c7337471c2a68dafb66160c58037c23e1bcd8
+Author: Shante Kamutaundi <shaeilline@gmail.com>
+Date:   Thu Apr 23 23:50:59 2026 +0100
+
+    Refine EC highlighting test to use stricter condition
+
+commit 28887f708f1320cb840896892bd98a47745499bc
+Author: hasanalrashed <hasanal-rashed@hotmail.com>
+Date:   Thu Apr 23 15:24:25 2026 +0100
+
+    Include .idea/ in .gitignore, add css to css folder from student dashboard
+
+commit e3f63de5f54d088c89662ab9fd532d06a4fbbb2d
+Author: Shante Kamutaundi <shaeilline@gmail.com>
+Date:   Thu Apr 23 00:21:19 2026 +0100
+
+    Add BDD tests for user stories 5 to 8
+
+commit 5c12e4a1cf75c4d52bd79e568357326a0a6d1522
+Author: Saffron Forde <saffron.forde@outlook.com>
+Date:   Tue Apr 21 21:34:28 2026 +0100
+
+    add code to show calendar view in previous and future months
+
+commit bdb1d4433194a4bd186c04466d26d56f7eb9d7f3
+Author: hasanalrashed <hasanal-rashed@hotmail.com>
+Date:   Mon Apr 13 22:54:29 2026 +0100
+
+    Add story 6 feature, deadline countdown if its within 7 days
+
+commit 0743b1013bf653282dcbbf420fc70acce96e7bf4
+Author: Saffron Forde <saffron.forde@outlook.com>
+Date:   Wed Apr 8 14:33:33 2026 +0100
+
+    made changes to html and route so calendar view so users can navigate to different months
+
+commit 9f27b78a21f6fe3884006e294da0dda148761a1b
+Author: opasilas <opasilas1@gmail.com>
+Date:   Tue Mar 24 20:50:38 2026 +0000
+
+    UC-001: code refactor and dashboard controller
+
+commit 536d15bea6a344ec67c3a992438858817a662b48
+Author: opasilas <opasilas1@gmail.com>
+Date:   Tue Mar 17 19:20:06 2026 +0000
+
+    Stop tracking .DS_Store and pycache
+
+commit 7321d4f631cce2180d9fe61e706422cc7e1b07bd
+Author: opasilas <opasilas1@gmail.com>
+Date:   Tue Mar 17 19:10:35 2026 +0000
+
+    added pycache to gitignore
+
+commit dd1d9314954c5c2e20b5a008258ec610e93751a9
+Author: opasilas <opasilas1@gmail.com>
+Date:   Tue Mar 17 17:56:02 2026 +0000
+
+    flask code refactor
+
+commit e8f1a9b47dbef6beb8a991199b4ad95ea7a53a95
+Merge: 7e1aba1 02fb850
+Author: Silas Opawoye <75432347+opasilas@users.noreply.github.com>
+Date:   Tue Mar 3 21:03:21 2026 +0000
+
+    Merge pull request #1 from opasilas/feature/student
+    
+    Feature/student
+
+commit 02fb8500f63ad0f6357d6ab413690bcbe2a0decf
+Author: opasilas <opasilas1@gmail.com>
+Date:   Tue Mar 3 20:58:06 2026 +0000
+
+    testing new branch
+
+commit df0401200a5e31c93f0ec4b4ea862f9465155709
+Merge: 95ac899 8364296
+Author: opasilas <opasilas1@gmail.com>
+Date:   Tue Mar 3 20:49:05 2026 +0000
+
+    Merge branch 'main' of https://github.com/opasilas/UCompass
+
+commit 7e1aba1daf095597d2c5d935514af5d9a60b4c92
+Merge: 7f9333e 8364296
+Author: Shante Kamutaundi <shaeilline@gmail.com>
+Date:   Tue Mar 3 20:46:48 2026 +0000
+
+    Merge branch 'main' of https://github.com/opasilas/UCompass
+
+commit 7f9333e9105b9acb4e8bcb81b247b7818fb0eaeb
+Author: Shante Kamutaundi <shaeilline@gmail.com>
+Date:   Tue Mar 3 20:44:59 2026 +0000
+
+    added update task and student dashboard
+
+commit 83642965e301c2cb80374a8d06266b0735d89c02
+Author: Saffron Forde <saffron.forde@outlook.com>
+Date:   Tue Mar 3 20:39:20 2026 +0000
+
+    adding deadline and teacher dashboard html files
+
+commit 95ac8992a75460301c822f330fe982694a4a2ba8
+Author: opasilas <opasilas1@gmail.com>
+Date:   Tue Mar 3 20:30:55 2026 +0000
+
+    test change
+
+commit f28e88091a0c92fd91517c6f7359df0dfbf42dfa
+Author: Reece Palmer <REECELPALMER@GMAIL.COM>
+Date:   Fri Feb 27 21:02:02 2026 +0000
+
+    update repo
+
+commit 5f21766116492a994a5c8f8f8e389067e07caf8d
+Author: hasanalrashed <hasanal-rashed@hotmail.com>
+Date:   Fri Feb 27 09:47:17 2026 +0000
+
+    add unit test for student dashboard access
+
+commit c574523b873d9424df9d3503a8b4dfea9af080f5
+Author: hasanalrashed <hasanal-rashed@hotmail.com>
+Date:   Fri Feb 27 09:13:13 2026 +0000
+
+    add basic homepage unit test
+
+commit f69e7e489d40025d71dc18702c71b4548eaddfec
+Author: hasanalrashed <hasanal-rashed@hotmail.com>
+Date:   Fri Feb 27 08:20:39 2026 +0000
+
+    adjust busy week alert threshold to >= 5, correct student dashboard alert number
+
+commit 5adbe851ec25778c5a6ab3e33290d6531d2c6201
+Author: hasanalrashed <hasanal-rashed@hotmail.com>
+Date:   Fri Feb 27 08:03:35 2026 +0000
+
+    Add requirements.txt
+
+commit 30dd8978ae0abcca281146d97221b219f97a7a24
+Author: Reece Palmer <REECELPALMER@GMAIL.COM>
+Date:   Thu Feb 26 23:15:29 2026 +0000
+
+    working mvp
+
+commit 1c8e9a7a374e5b030291b1eb12f74bfc32202932
+Merge: 3d0cac0 38e2659
+Author: opasilas <opasilas1@gmail.com>
+Date:   Tue Feb 24 20:43:21 2026 +0000
+
+    Merge branch 'main' of https://github.com/opasilas/UCompass
+    t the eommit.
+
+commit 3d0cac004377849ba0b5f2d3ba3b34dd148551df
+Author: opasilas <opasilas1@gmail.com>
+Date:   Tue Feb 24 19:59:27 2026 +0000
+
+    initial commit - routes and models
+
+commit 38e2659af40f63a3735ff36fbaa8c150487443ad
+Author: Reece Palmer <REECELPALMER@GMAIL.COM>
+Date:   Tue Feb 24 13:22:30 2026 +0000
+
+    add logic to differentiate between student / teacher upon login
+
+commit 8111c34331d8e7244c3a55c7b5be7e830ae0f2bb
+Author: Reece Palmer <REECELPALMER@GMAIL.COM>
+Date:   Tue Feb 24 12:32:29 2026 +0000
+
+    add login page
+
+commit e0d02b3987eace7e5f57689aca198ccfe175c0b9
+Author: Hasan Al-Rashed <hasanal-rashed@hotmail.com>
+Date:   Thu Feb 19 14:11:41 2026 +0000
+
+    Rename project from bookface to UCompass
+
+commit 1e85dc31a29885d057023139afca7c894c25bc76
+Author: Silas Opawoye <75432347+opasilas@users.noreply.github.com>
+Date:   Mon Feb 9 12:06:16 2026 +0000
+
+    Initial commit
